@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../data/models/sujet_model.dart';
 
 class SubjectCard extends StatelessWidget {
@@ -17,77 +18,230 @@ class SubjectCard extends StatelessWidget {
 
   static const _domainIcons = {
     'informatique': Icons.code_rounded,
-    'génie civil': Icons.architecture_rounded,
+    'génie civil':  Icons.architecture_rounded,
     'électronique': Icons.electrical_services_rounded,
-    'mécanique': Icons.settings_rounded,
-    'gestion': Icons.bar_chart_rounded,
+    'mécanique':    Icons.settings_rounded,
+    'gestion':      Icons.bar_chart_rounded,
   };
 
-  static const _accentColors = [
-    Color(0xFFF28C28),
-    Color(0xFF4ECDC4),
-    Color(0xFF45B7D1),
-    Color(0xFF6BCB77),
-    Color(0xFFAB47BC),
+  static const _iconColors = [
+    Color(0xFF3B82F6),
+    Color(0xFF8B5CF6),
+    Color(0xFF059669),
+    Color(0xFFDB2777),
+    Color(0xFF0891B2),
+  ];
+
+  static const _iconBgs = [
+    Color(0xFFEFF6FF),
+    Color(0xFFF5F3FF),
+    Color(0xFFF0FDF4),
+    Color(0xFFFDF2F8),
+    Color(0xFFECFEFF),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final accent = _accentColors[index % _accentColors.length];
+    final iconColor = _iconColors[index % _iconColors.length];
+    final iconBg    = _iconBgs[index % _iconBgs.length];
     final domainKey = sujet.filiereCible.toLowerCase();
     final icon = _domainIcons.entries
-        .firstWhere((e) => domainKey.contains(e.key),
-        orElse: () => const MapEntry('default', Icons.work_outline_rounded))
+        .firstWhere(
+          (e) => domainKey.contains(e.key),
+      orElse: () =>
+      const MapEntry('default', Icons.work_outline_rounded),
+    )
         .value;
 
     return FadeTransition(
       opacity: animation,
       child: Transform.translate(
-        offset: Offset(0, 24 * (1 - animation.value)),
+        offset: Offset(0, 20 * (1 - animation.value)),
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 14),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () => context.router.push(SubjectDetailRoute(sujet: sujet)),
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GestureDetector(
+            onTap: () =>
+                context.router.push(SubjectDetailRoute(sujet: sujet)),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade100),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 14, offset: const Offset(0, 4)),
-                ],
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                border: Border.all(color: AppTheme.border),
+                boxShadow: AppTheme.shadowSM,
               ),
-              child: IntrinsicHeight(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      decoration: BoxDecoration(
-                        color: accent,
-                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  // ── Top row ─────────────────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      // ── Icône domaine ──────────────
+                      Container(
+                        width: 44, height: 44,
+                        decoration: BoxDecoration(
+                          color: iconBg,
+                          borderRadius:
+                          BorderRadius.circular(AppTheme.radiusSM),
+                        ),
+                        child: Icon(icon, color: iconColor, size: 20),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
+
+                      const SizedBox(width: 12),
+
+                      // ── Titre + Tags ───────────────
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildTopRow(icon, accent),
-                            const SizedBox(height: 10),
-                            Divider(height: 1, color: Colors.grey.shade100),
-                            const SizedBox(height: 10),
-                            _buildDescription(),
-                            if (sujet.competencesCibles.isNotEmpty) _buildSkills(),
-                            const SizedBox(height: 10),
-                            _buildFooter(accent),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    sujet.titre,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.textPrimary,
+                                      height: 1.3,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // ── Status dot ────────
+                                Container(
+                                  width: 8, height: 8,
+                                  margin: const EdgeInsets.only(top: 4),
+                                  decoration: BoxDecoration(
+                                    color: sujet.estDisponible
+                                        ? AppTheme.success
+                                        : AppTheme.textLight,
+                                    shape: BoxShape.circle,
+                                    boxShadow: sujet.estDisponible
+                                        ? [
+                                      BoxShadow(
+                                        color: AppTheme.success
+                                            .withOpacity(0.4),
+                                        blurRadius: 6,
+                                      )
+                                    ]
+                                        : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            // ── Tags ──────────────────
+                            Row(
+                              children: [
+                                _buildTag(
+                                  sujet.filiereCible,
+                                  iconColor,
+                                  iconBg,
+                                ),
+                                const SizedBox(width: 6),
+                                _buildTag(
+                                  sujet.cycleCible,
+                                  AppTheme.textSecond,
+                                  AppTheme.background,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+                  Divider(height: 1, color: AppTheme.border),
+                  const SizedBox(height: 12),
+
+                  // ── Description ─────────────────────
+                  Text(
+                    sujet.description,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppTheme.textSecond,
+                      height: 1.5,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  // ── Skills ──────────────────────────
+                  if (sujet.competencesCibles.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: sujet.competencesCibles
+                          .take(3)
+                          .map((c) => _buildSkillChip(c))
+                          .toList(),
                     ),
                   ],
-                ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Footer ──────────────────────────
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule_rounded,
+                        size: 12,
+                        color: AppTheme.textLight,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatDate(sujet.datePublication),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.textLight,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      // ── Voir détail btn ─────────────
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primarySoft,
+                          borderRadius:
+                          BorderRadius.circular(AppTheme.radiusSM),
+                          border: Border.all(
+                            color: AppTheme.primary.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Text(
+                              'Voir le détail',
+                              style: TextStyle(
+                                color: AppTheme.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 11,
+                              color: AppTheme.primary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -96,70 +250,41 @@ class SubjectCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow(IconData icon, Color accent) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 44, height: 44,
-          decoration: BoxDecoration(color: accent.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-          child: Icon(icon, color: accent, size: 20),
+  Widget _buildTag(String label, Color color, Color bg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: color,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(sujet.titre,
-                        style: const TextStyle(color: Color(0xFF1A2340), fontSize: 14, fontWeight: FontWeight.w700),
-                        maxLines: 2, overflow: TextOverflow.ellipsis),
-                  ),
-                  _StatusIndicator(isAvailable: sujet.estDisponible),
-                ],
-              ),
-              const SizedBox(height: 5),
-              Row(
-                children: [
-                  _MiniTag(label: sujet.filiereCible, color: accent),
-                  const SizedBox(width: 6),
-                  _MiniTag(label: sujet.cycleCible, color: Colors.grey.shade400, isOutline: true),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDescription() {
-    return Text(sujet.description,
-        style: TextStyle(color: Colors.grey.shade600, fontSize: 12, height: 1.55),
-        maxLines: 2, overflow: TextOverflow.ellipsis);
-  }
-
-  Widget _buildSkills() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Wrap(
-        spacing: 6, runSpacing: 6,
-        children: sujet.competencesCibles.take(3).map((c) => _SkillChip(label: c)).toList(),
       ),
     );
   }
 
-  Widget _buildFooter(Color accent) {
-    return Row(
-      children: [
-        Icon(Icons.schedule_rounded, size: 12, color: Colors.grey.shade400),
-        const SizedBox(width: 4),
-        Text(_formatDate(sujet.datePublication), style: TextStyle(color: Colors.grey.shade400, fontSize: 11)),
-        const Spacer(),
-        _DetailButton(accent: accent),
-      ],
+  Widget _buildSkillChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppTheme.background,
+        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: AppTheme.textSecond,
+        ),
+      ),
     );
   }
 
@@ -169,70 +294,4 @@ class SubjectCard extends StatelessWidget {
     if (diff == 1) return "Hier";
     return "Il y a $diff jours";
   }
-}
-
-// --- Petits sous-widgets de la carte ---
-
-class _StatusIndicator extends StatelessWidget {
-  final bool isAvailable;
-  const _StatusIndicator({required this.isAvailable});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 8),
-      width: 8, height: 8,
-      decoration: BoxDecoration(
-        color: isAvailable ? const Color(0xFF4CAF50) : Colors.grey.shade300,
-        shape: BoxShape.circle,
-        boxShadow: isAvailable ? [BoxShadow(color: const Color(0xFF4CAF50).withOpacity(0.4), blurRadius: 6)] : null,
-      ),
-    );
-  }
-}
-
-class _MiniTag extends StatelessWidget {
-  final String label;
-  final Color color;
-  final bool isOutline;
-  const _MiniTag({required this.label, required this.color, this.isOutline = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: isOutline ? Colors.transparent : color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(isOutline ? 0.4 : 0.2)),
-      ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700)),
-    );
-  }
-}
-
-class _SkillChip extends StatelessWidget {
-  final String label;
-  const _SkillChip({required this.label});
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade200)),
-    child: Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 11, fontWeight: FontWeight.w500)),
-  );
-}
-
-class _DetailButton extends StatelessWidget {
-  final Color accent;
-  const _DetailButton({required this.accent});
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    decoration: BoxDecoration(color: accent.withOpacity(0.1), borderRadius: BorderRadius.circular(20), border: Border.all(color: accent.withOpacity(0.25))),
-    child: Row(children: [
-      Text('Voir le détail', style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.w600)),
-      const SizedBox(width: 3),
-      Icon(Icons.arrow_forward_rounded, size: 11, color: accent),
-    ]),
-  );
 }

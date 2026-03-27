@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
+import '../../../../core/theme/app_theme.dart';
 
 class SkillTag extends StatelessWidget {
   final String label;
@@ -11,18 +10,17 @@ class SkillTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-        color: asmOrange.withOpacity(0.07),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: asmOrange.withOpacity(0.2)),
+        color: AppTheme.background,
+        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+        border: Border.all(color: AppTheme.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 5,
-            height: 5,
+            width: 5, height: 5,
             decoration: const BoxDecoration(
-              color: asmOrange,
+              color: AppTheme.primary,
               shape: BoxShape.circle,
             ),
           ),
@@ -30,9 +28,9 @@ class SkillTag extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.black87,
               fontSize: 12,
               fontWeight: FontWeight.w500,
+              color: AppTheme.textPrimary,
             ),
           ),
         ],

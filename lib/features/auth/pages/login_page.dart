@@ -1,13 +1,18 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../core/api/api_endpoints.dart';
+import '../../../core/api/dio_client.dart';
+import '../../../core/di/injection.dart';
 import '../../../core/routes/app_router.dart';
-import '../logic/auth_bloc.dart';
-import '../logic/auth_event.dart';
-import '../logic/auth_state.dart';
-
-const Color asmOrange = Color(0xFFF57C00);
+import '../../../core/theme/app_theme.dart';
+import '../data/repositories/auth_repository.dart';
+import '../widgets/Login/login_background.dart';
+import '../widgets/Login/login_button.dart';
+import '../widgets/Login/login_footer.dart';
+import '../widgets/Login/login_input_field.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
@@ -18,20 +23,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   bool _isPasswordHidden = true;
+  bool _isLoading = false;
   String? _emailError;
   String? _passwordError;
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
     setState(() {
       _emailError = null;
       _passwordError = null;
@@ -39,204 +46,224 @@ class _LoginPageState extends State<LoginPage> {
 
     bool hasError = false;
 
-    if (emailController.text.trim().isEmpty) {
-      _emailError = "L'email est requis";
+    if (_emailController.text.trim().isEmpty) {
+      _emailError = "L'adresse email est requise";
       hasError = true;
-    } else if (!emailController.text.trim().contains('@')) {
-      _emailError = "L'email doit contenir @";
+    } else if (!_emailController.text.trim().contains('@')) {
+      _emailError = "Adresse email invalide";
       hasError = true;
     }
 
-    if (passwordController.text.trim().isEmpty) {
+    if (_passwordController.text.trim().isEmpty) {
       _passwordError = "Le mot de passe est requis";
       hasError = true;
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setState(() {});
+      return;
+    }
 
-    context.read<AuthBloc>().add(LoginSubmitted(
-      emailController.text.trim(),
-      passwordController.text.trim(),
-    ));
+    setState(() => _isLoading = true);
+
+    try {
+      final token = await sl<AuthRepository>().login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (token.isNotEmpty) {
+        final role = await sl<AuthRepository>().getRole() ?? '';
+        print('>>> [LOGIN] Rôle: $role');
+
+        if (!mounted) return;
+
+        if (role == 'ROLE_STAGIAIRE') {
+          await _checkStagiaireAccess(context);
+        } else if (role == 'ROLE_ENCADRANT') {
+          context.router.replace(const EncadrantHomeRoute());
+        } else {
+          context.router.replace(const SubjectListRoute());
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _checkStagiaireAccess(BuildContext context) async {
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'token') ?? '';
+      print('>>> [CHECK] Token: $token');
+
+      final dio = sl<DioClient>().dio;
+      final response = await dio.get(
+        '/stagiaires/has-dossier',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      print('>>> [CHECK] has-dossier: ${response.data}');
+      final hasDossier = response.data as bool;
+
+      if (!context.mounted) return;
+
+      if (hasDossier) {
+        print('>>> [CHECK] Redirection → StagiaireHome');
+        context.router.replace(const StagiaireHomeRoute());
+      } else {
+        print('>>> [CHECK] Redirection → SubjectList');
+        context.router.replace(const SubjectListRoute());
+      }
+    } catch (e) {
+      print('>>> [CHECK] ERREUR: $e');
+      if (!context.mounted) return;
+      context.router.replace(const SubjectListRoute());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthAuthenticated) { // ✅ CORRIGÉ : AuthAuthenticated au lieu de AuthSuccess
-          context.router.replace(const SubjectListRoute());
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-          );
-        }
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF2F2F2),
-        resizeToAvoidBottomInset: true,
-        body: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                width: 150,
-                height: 100,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF9800), Color(0xFFF57C00), Color(0xFFE65100)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(80)),
-                ),
-              ),
-            ),
-            Center(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF0F2F5),
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          const LoginBackground(),
+          SafeArea(
+            child: Center(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Column(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 32),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.surface,
+                        borderRadius:
+                        BorderRadius.circular(AppTheme.radiusXL),
+                        boxShadow: AppTheme.shadowMD,
+                      ),
+                      padding: const EdgeInsets.all(28),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Bienvenue",
-                            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            "Connectez-vous à votre compte",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      _inputField(
-                        Icons.email,
-                        "Email",
-                        controller: emailController,
-                        errorText: _emailError,
-                      ),
-                      const SizedBox(height: 16),
-                      _inputField(
-                        Icons.lock,
-                        "Mot de passe",
-                        controller: passwordController,
-                        obscure: _isPasswordHidden,
-                        errorText: _passwordError,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () => setState(() => _isPasswordHidden = !_isPasswordHidden),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF9800), Color(0xFFF57C00), Color(0xFFE65100)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: const [
-                                BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
+                          Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Connexion",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  "Connexion à votre compte",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                      color: AppTheme.textSecond),
+                                ),
+                                const SizedBox(height: 16),
+                                Container(
+                                  width: 40,
+                                  height: 3,
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primary,
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                ),
                               ],
                             ),
-                            child: ElevatedButton(
-                              onPressed: state is AuthLoading ? null : _login,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              ),
-                              child: state is AuthLoading
-                                  ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                              )
-                                  : const Text(
-                                "Se connecter",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                  color: Colors.white,
-                                ),
+                          ),
+                          const SizedBox(height: 28),
+                          Text(
+                            "Adresse email",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          LoginInputField(
+                            controller: _emailController,
+                            hint: "votre@email.com",
+                            icon: Icons.mail_outline_rounded,
+                            iconColor: const Color(0xFF3B82F6),
+                            iconBg: const Color(0xFFEFF6FF),
+                            errorText: _emailError,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            "Mot de passe",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          LoginInputField(
+                            controller: _passwordController,
+                            hint: "••••••••",
+                            icon: Icons.lock_outline_rounded,
+                            iconColor: const Color(0xFF8B5CF6),
+                            iconBg: const Color(0xFFF5F3FF),
+                            errorText: _passwordError,
+                            obscure: _isPasswordHidden,
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isPasswordHidden = !_isPasswordHidden;
+                                });
+                              },
+                              child: Icon(
+                                _isPasswordHidden
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: AppTheme.textLight,
+                                size: 20,
                               ),
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Pas de compte ? ", style: TextStyle(color: Colors.grey)),
-                          GestureDetector(
-                            onTap: () => context.pushRoute(const RegisterRoute()),
-                            child: const Text(
-                              "Créer un compte",
-                              style: TextStyle(color: asmOrange, fontWeight: FontWeight.bold),
-                            ),
+                          ),
+                          const SizedBox(height: 28),
+                          LoginButton(
+                            onPressed: _isLoading ? null : _login,
+                            isLoading: _isLoading,
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 24),
+                    const LoginFooter(),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _inputField(
-      IconData icon,
-      String hint, {
-        TextEditingController? controller,
-        bool obscure = false,
-        String? errorText,
-        Widget? suffixIcon,
-      }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))],
-          ),
-          child: TextField(
-            controller: controller,
-            obscureText: obscure,
-            decoration: InputDecoration(
-              hintText: hint,
-              prefixIcon: Icon(icon, color: Colors.grey),
-              suffixIcon: suffixIcon,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            ),
-          ),
-        ),
-        if (errorText != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 20, top: 6),
-            child: Text(errorText, style: const TextStyle(color: Colors.red, fontSize: 12)),
-          ),
-      ],
     );
   }
 }

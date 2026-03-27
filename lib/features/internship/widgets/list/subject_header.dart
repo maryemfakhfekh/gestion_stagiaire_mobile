@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../logic/internship_bloc.dart';
 import '../../logic/internship_state.dart';
 
@@ -10,110 +11,170 @@ class SubjectHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color asmOrangeDark = Color(0xFFE65100);
-
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFF9800), asmOrangeDark],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
-      ),
+      color: AppTheme.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          child: BlocBuilder<InternshipBloc, InternshipState>(
+            builder: (context, state) {
+              final count =
+              state is SubjectsLoaded ? state.subjects.length : 0;
+              final available = state is SubjectsLoaded
+                  ? state.subjects.where((s) => s.estDisponible).length
+                  : 0;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildAvatar(context),
+                  // ── Top row ─────────────────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Offres de Stage",
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall
+                              ?.copyWith(
+                            color: AppTheme.textPrimary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () =>
+                            context.router.push(const ProfileRoute()),
+                        child: Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primarySoft,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppTheme.primary.withOpacity(0.18),
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.person_rounded,
+                            color: AppTheme.primary,
+                            size: 21,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  Text(
+                    "Trouvez le stage qui vous correspond",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.textSecond,
+                      height: 1.35,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // ── Stats card ─────────────────────────
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surface,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                      border: Border.all(color: AppTheme.border),
+                      boxShadow: AppTheme.shadowSM,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatTile(
+                            icon: Icons.work_outline_rounded,
+                            value: '$count',
+                            label: 'Offres',
+                            color: AppTheme.primary,
+                            bg: AppTheme.primarySoft,
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 38,
+                          color: AppTheme.border,
+                        ),
+                        Expanded(
+                          child: _buildStatTile(
+                            icon: Icons.check_circle_outline_rounded,
+                            value: '$available',
+                            label: 'Disponibles',
+                            color: AppTheme.success,
+                            bg: const Color(0xFFF0FDF4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
                 ],
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                'Offres de Stage',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                  height: 1.1,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildStatsRow(),
-            ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAvatar(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.router.push(const ProfileRoute()),
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.25),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+  Widget _buildStatTile({
+    required IconData icon,
+    required String value,
+    required String label,
+    required Color color,
+    required Color bg,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: color,
+          ),
         ),
-        child: const Icon(Icons.person_rounded, color: Colors.white, size: 18),
-      ),
-    );
-  }
-
-  Widget _buildStatsRow() {
-    return BlocBuilder<InternshipBloc, InternshipState>(
-      builder: (context, state) {
-        final count = state is SubjectsLoaded ? state.subjects.length : 0;
-        final available = state is SubjectsLoaded
-            ? state.subjects.where((s) => s.estDisponible).length
-            : 0;
-        return Row(
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _StatChip(value: '$count', label: 'Offres'),
-            const SizedBox(width: 10),
-            _StatChip(value: '$available', label: 'Disponibles'),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.textSecond,
+              ),
+            ),
           ],
-        );
-      },
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  final String value, label;
-  const _StatChip({required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
-          const SizedBox(width: 5),
-          Text(label, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

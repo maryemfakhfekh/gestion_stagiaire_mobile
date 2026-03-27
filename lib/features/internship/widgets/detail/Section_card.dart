@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
+import '../../../../core/theme/app_theme.dart';
 
 class SectionCard extends StatelessWidget {
   final String title;
@@ -19,44 +18,42 @@ class SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: AppTheme.shadowSM,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          // ── Header ────────────────────────────────────
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                width: 32, height: 32,
                 decoration: BoxDecoration(
-                  color: asmOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppTheme.primarySoft,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXS),
                 ),
-                child: Icon(icon, size: 14, color: asmOrange),
+                child: Icon(icon, size: 15, color: AppTheme.primary),
               ),
               const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(
-                  color: Colors.black87,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary,
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 14),
-          Divider(height: 1, color: Colors.grey.shade100),
+          Divider(height: 1, color: AppTheme.border),
           const SizedBox(height: 14),
+
           child,
         ],
       ),

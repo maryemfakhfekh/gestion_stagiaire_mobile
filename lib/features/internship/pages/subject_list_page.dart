@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../widgets/list/subject_header.dart';
 import '../widgets/list/subject_card.dart';
 import '../widgets/list/state_widgets.dart';
@@ -27,7 +28,8 @@ class _SubjectListPageState extends State<SubjectListPage>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 900))
+        vsync: this,
+        duration: const Duration(milliseconds: 900))
       ..forward();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InternshipBloc>().add(LoadSubjects());
@@ -52,11 +54,18 @@ class _SubjectListPageState extends State<SubjectListPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: AppTheme.background,
       body: Column(
         children: [
           const SubjectHeader(),
+
+          // ── Divider ───────────────────────────────────
+          Container(height: 1, color: AppTheme.border),
+
+          // ── Search bar ────────────────────────────────
           _buildSearchBar(),
+
+          // ── Liste ─────────────────────────────────────
           Expanded(child: _buildListSection()),
         ],
       ),
@@ -64,30 +73,48 @@ class _SubjectListPageState extends State<SubjectListPage>
   }
 
   Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+    return Container(
+      color: AppTheme.surface,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppTheme.background,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+          border: Border.all(color: AppTheme.border),
         ),
         child: TextField(
           controller: _searchController,
           onChanged: (v) => setState(() => _searchQuery = v),
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppTheme.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
           decoration: InputDecoration(
             hintText: 'Rechercher un stage...',
-            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-            prefixIcon:
-            Icon(Icons.search_rounded, color: Colors.grey.shade400, size: 20),
+            hintStyle: const TextStyle(
+              color: AppTheme.textLight,
+              fontSize: 14,
+            ),
+            prefixIcon: const Icon(
+              Icons.search_rounded,
+              color: AppTheme.textLight,
+              size: 20,
+            ),
+            suffixIcon: _searchQuery.isNotEmpty
+                ? GestureDetector(
+              onTap: () {
+                _searchController.clear();
+                setState(() => _searchQuery = '');
+              },
+              child: const Icon(
+                Icons.close_rounded,
+                color: AppTheme.textLight,
+                size: 18,
+              ),
+            )
+                : null,
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
           ),
@@ -99,16 +126,36 @@ class _SubjectListPageState extends State<SubjectListPage>
   Widget _buildListSection() {
     return BlocBuilder<InternshipBloc, InternshipState>(
       builder: (context, state) {
+
         if (state is InternshipLoading) {
-          return const Center(
-              child: CircularProgressIndicator(
-                  color: Color(0xFFF28C28), strokeWidth: 2));
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(
+                  color: AppTheme.primary,
+                  strokeWidth: 2,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Chargement des offres...",
+                  style: TextStyle(
+                    color: AppTheme.textSecond,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          );
         }
+
         if (state is InternshipError) {
           return ErrorStateWidget(
-              message: state.message,
-              onRetry: () =>
-                  context.read<InternshipBloc>().add(LoadSubjects()));
+            message: state.message,
+            onRetry: () =>
+                context.read<InternshipBloc>().add(LoadSubjects()),
+          );
         }
 
         if (state is SubjectsLoaded) {
@@ -116,16 +163,22 @@ class _SubjectListPageState extends State<SubjectListPage>
           if (filtered.isEmpty) return const EmptyStateWidget();
 
           return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
             itemCount: filtered.length,
             itemBuilder: (context, index) {
               final animation = CurvedAnimation(
                 parent: _controller,
-                curve: Interval((index * 0.08).clamp(0.0, 0.9), 1.0,
-                    curve: Curves.easeOut),
+                curve: Interval(
+                  (index * 0.08).clamp(0.0, 0.9),
+                  1.0,
+                  curve: Curves.easeOut,
+                ),
               );
               return SubjectCard(
-                  sujet: filtered[index], index: index, animation: animation);
+                sujet: filtered[index],
+                index: index,
+                animation: animation,
+              );
             },
           );
         }

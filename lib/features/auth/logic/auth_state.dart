@@ -4,10 +4,19 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-// ✅ Token valide trouvé au démarrage ou login réussi
-class AuthAuthenticated extends AuthState {}
+class AuthAuthenticated extends AuthState {
+  final String role;
+  final DateTime timestamp; // ← rend chaque état unique
 
-// ✅ Pas de token ou déconnexion
+  AuthAuthenticated({required this.role}) : timestamp = DateTime.now();
+
+  @override
+  bool operator ==(Object other) => false; // ← toujours différent
+
+  @override
+  int get hashCode => timestamp.hashCode;
+}
+
 class AuthUnauthenticated extends AuthState {}
 
 class AuthSuccess extends AuthState {}

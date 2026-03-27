@@ -1,9 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../data/models/sujet_model.dart';
-
-const Color asmOrange     = Color(0xFFF28C28);
-const Color asmOrangeDark = Color(0xFFE65100);
 
 class SubjectDetailHeader extends StatelessWidget {
   final SujetModel sujet;
@@ -19,24 +17,16 @@ class SubjectDetailHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFF9800), asmOrangeDark],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
-      ),
+      color: AppTheme.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              // ── Top row ───────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -44,33 +34,71 @@ class SubjectDetailHeader extends StatelessWidget {
                   _AvailabilityBadge(estDisponible: sujet.estDisponible),
                 ],
               ),
-              const SizedBox(height: 14),
+
+              const SizedBox(height: 20),
+
+              // ── Titre ─────────────────────────────────
               Text(
                 sujet.titre,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  height: 1.25,
-                  letterSpacing: -0.3,
-                ),
+                style: Theme.of(context).textTheme.headlineLarge,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+
               const SizedBox(height: 12),
+
+              // ── Badges ────────────────────────────────
               Row(
                 children: [
-                  SubjectHeroBadge(icon: domainIcon, label: sujet.filiereCible),
+                  _buildBadge(
+                    icon: domainIcon,
+                    label: sujet.filiereCible,
+                    color: AppTheme.primary,
+                    bg: AppTheme.primarySoft,
+                  ),
                   const SizedBox(width: 8),
-                  SubjectHeroBadge(
+                  _buildBadge(
                     icon: Icons.workspace_premium_rounded,
                     label: sujet.cycleCible,
+                    color: AppTheme.textSecond,
+                    bg: AppTheme.background,
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBadge({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required Color bg,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -83,15 +111,17 @@ class _BackButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.router.maybePop(),
       child: Container(
-        width: 36,
-        height: 36,
+        width: 38, height: 38,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withOpacity(0.3)),
+          color: AppTheme.background,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+          border: Border.all(color: AppTheme.border),
         ),
-        child: const Icon(Icons.arrow_back_rounded,
-            color: Colors.white, size: 18),
+        child: const Icon(
+          Icons.arrow_back_rounded,
+          color: AppTheme.textPrimary,
+          size: 18,
+        ),
       ),
     );
   }
@@ -104,34 +134,30 @@ class _AvailabilityBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = estDisponible ? AppTheme.success : AppTheme.error;
+    final bg    = estDisponible
+        ? const Color(0xFFF0FDF4)
+        : const Color(0xFFFEF2F2);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: estDisponible
-            ? Colors.white.withOpacity(0.2)
-            : Colors.red.shade900.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.35)),
+        color: bg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 6,
-            height: 6,
+            width: 6, height: 6,
             decoration: BoxDecoration(
-              color: estDisponible
-                  ? const Color(0xFF69F0AE)
-                  : Colors.red.shade200,
+              color: color,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: (estDisponible
-                      ? const Color(0xFF69F0AE)
-                      : Colors.red)
-                      .withOpacity(0.6),
-                  blurRadius: 6,
-                  spreadRadius: 1,
+                  color: color.withOpacity(0.4),
+                  blurRadius: 4,
                 ),
               ],
             ),
@@ -139,45 +165,11 @@ class _AvailabilityBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             estDisponible ? 'DISPONIBLE' : 'COMPLET',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: color,
               fontSize: 10,
               fontWeight: FontWeight.w800,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Hero badge ────────────────────────────────────────────────────
-class SubjectHeroBadge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  const SubjectHeroBadge({super.key, required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.18),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: Colors.white),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
             ),
           ),
         ],

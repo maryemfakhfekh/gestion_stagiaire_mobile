@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    EncadrantHomeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EncadrantHomePage(),
+      );
+    },
     LoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -37,6 +43,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const SplashPage(),
+      );
+    },
+    StagiaireHomeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const StagiaireHomePage(),
       );
     },
     SubjectDetailRoute.name: (routeData) {
@@ -66,6 +78,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [EncadrantHomePage]
+class EncadrantHomeRoute extends PageRouteInfo<void> {
+  const EncadrantHomeRoute({List<PageRouteInfo>? children})
+      : super(
+          EncadrantHomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EncadrantHomeRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -120,6 +146,20 @@ class SplashRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SplashRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [StagiaireHomePage]
+class StagiaireHomeRoute extends PageRouteInfo<void> {
+  const StagiaireHomeRoute({List<PageRouteInfo>? children})
+      : super(
+          StagiaireHomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'StagiaireHomeRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

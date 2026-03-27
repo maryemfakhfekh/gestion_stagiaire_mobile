@@ -1,5 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import '../../pages/upload_cv_page.dart' show asmOrangeDark;
+import '../../../../core/theme/app_theme.dart';
 
 class UploadHeader extends StatelessWidget {
   const UploadHeader({super.key});
@@ -7,89 +8,55 @@ class UploadHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFF9800), asmOrangeDark],
-        ),
-      ),
+      color: AppTheme.surface,
       child: SafeArea(
         bottom: false,
-        child: Stack(
-          children: [
-            // Cercles décoratifs
-            Positioned(
-              top: -20,
-              right: -20,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.07),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 30,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 16, 20),
-              child: Row(
-                children: [
-                  // Bouton retour
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).maybePop(),
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                        border:
-                        Border.all(color: Colors.white.withOpacity(0.3)),
-                      ),
-                      child: const Icon(Icons.arrow_back_rounded,
-                          color: Colors.white, size: 20),
-                    ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 16, 16),
+          child: Row(
+            children: [
+
+              // ── Bouton retour ──────────────────────────
+              GestureDetector(
+                onTap: () => context.router.maybePop(),
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  width: 38, height: 38,
+                  decoration: BoxDecoration(
+                    color: AppTheme.background,
+                    borderRadius:
+                    BorderRadius.circular(AppTheme.radiusSM),
+                    border: Border.all(color: AppTheme.border),
                   ),
-                  const SizedBox(width: 4),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Déposer ma candidature',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      Text(
-                        'Étape 3 sur 3 · Upload CV',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.75),
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
+                  child: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: AppTheme.textPrimary,
+                    size: 18,
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 8),
+
+              // ── Titre + Subtitle ───────────────────────
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Déposer ma candidature',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Étape 3 sur 3 · Upload CV',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.textSecond,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

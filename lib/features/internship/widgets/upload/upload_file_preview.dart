@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class UploadFilePreview extends StatelessWidget {
   final String fileName;
@@ -19,36 +20,36 @@ class UploadFilePreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
         border: Border.all(
-          color: const Color(0xFF6BCB77).withOpacity(0.4),
-          width: 2,
+          color: AppTheme.success.withOpacity(0.3),
+          width: 1.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF6BCB77).withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        boxShadow: AppTheme.shadowSM,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Top row: icône + infos
+
+          // ── Fichier info ─────────────────────────────
           Row(
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 52, height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.red.shade100),
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius:
+                  BorderRadius.circular(AppTheme.radiusSM),
+                  border: Border.all(
+                    color: AppTheme.error.withOpacity(0.15),
+                  ),
                 ),
-                child: Icon(Icons.picture_as_pdf_rounded,
-                    color: Colors.red.shade400, size: 30),
+                child: Icon(
+                  Icons.picture_as_pdf_rounded,
+                  color: AppTheme.error,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -58,10 +59,9 @@ class UploadFilePreview extends StatelessWidget {
                     Text(
                       fileName,
                       style: const TextStyle(
-                        color: Colors.black87,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'Poppins',
+                        color: AppTheme.textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -71,10 +71,9 @@ class UploadFilePreview extends StatelessWidget {
                         if (fileSize != null)
                           Text(
                             formatSize(fileSize!),
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
+                            style: const TextStyle(
                               fontSize: 12,
-                              fontFamily: 'Poppins',
+                              color: AppTheme.textLight,
                             ),
                           ),
                         const SizedBox(width: 8),
@@ -82,25 +81,28 @@ class UploadFilePreview extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF6BCB77).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
+                            color: const Color(0xFFF0FDF4),
+                            borderRadius: BorderRadius.circular(
+                                AppTheme.radiusXS),
                             border: Border.all(
-                                color: const Color(0xFF6BCB77)
-                                    .withOpacity(0.3)),
+                              color: AppTheme.success.withOpacity(0.3),
+                            ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.check_circle_rounded,
-                                  color: Color(0xFF6BCB77), size: 10),
-                              SizedBox(width: 4),
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: AppTheme.success,
+                                size: 10,
+                              ),
+                              const SizedBox(width: 4),
                               Text(
                                 'Valide',
                                 style: TextStyle(
-                                  color: Color(0xFF6BCB77),
+                                  color: AppTheme.success,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: 'Poppins',
                                 ),
                               ),
                             ],
@@ -113,51 +115,59 @@ class UploadFilePreview extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 16),
-          Divider(color: Colors.grey.shade100),
+          const Divider(height: 1, color: AppTheme.border),
           const SizedBox(height: 12),
-          // Message prêt
+
+          // ── Prêt à soumettre ─────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF6BCB77).withOpacity(0.06),
-              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFF0FDF4),
+              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle_outline_rounded,
-                    color: Color(0xFF6BCB77), size: 16),
-                SizedBox(width: 8),
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: AppTheme.success,
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
                 Text(
                   'Fichier prêt à être soumis',
                   style: TextStyle(
-                    color: Color(0xFF6BCB77),
+                    color: AppTheme.success,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
                   ),
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 12),
-          // Bouton changer
+
+          // ── Changer fichier ──────────────────────────
           GestureDetector(
             onTap: onReplace,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.swap_horiz_rounded,
-                    size: 15, color: Colors.grey.shade400),
-                const SizedBox(width: 6),
+              children: const [
+                Icon(
+                  Icons.swap_horiz_rounded,
+                  size: 15,
+                  color: AppTheme.textLight,
+                ),
+                SizedBox(width: 6),
                 Text(
                   'Changer de fichier',
                   style: TextStyle(
-                    color: Colors.grey.shade400,
                     fontSize: 13,
-                    fontFamily: 'Poppins',
+                    color: AppTheme.textLight,
                   ),
                 ),
               ],

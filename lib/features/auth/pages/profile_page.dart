@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../../../core/routes/app_router.dart';
 import '../logic/auth_bloc.dart';
 import '../logic/auth_state.dart';
@@ -21,10 +22,10 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _storage = const FlutterSecureStorage();
 
-  String _email      = '';
+  String _email = '';
   String _nomComplet = '';
-  String _filiere    = '';
-  String _cycle      = '';
+  String _filiere = '';
+  String _cycle = '';
 
   @override
   void initState() {
@@ -39,24 +40,30 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadProfile() async {
-    final email      = await _storage.read(key: 'email')      ?? '';
+    final email = await _storage.read(key: 'email') ?? '';
     final nomComplet = await _storage.read(key: 'nomComplet') ?? '';
-    final filiere    = await _storage.read(key: 'filiere')    ?? '';
-    final cycle      = await _storage.read(key: 'cycle')      ?? '';
+    final filiere = await _storage.read(key: 'filiere') ?? '';
+    final cycle = await _storage.read(key: 'cycle') ?? '';
+
     if (mounted) {
       setState(() {
-        _email      = email;
+        _email = email;
         _nomComplet = nomComplet;
-        _filiere    = filiere;
-        _cycle      = cycle;
+        _filiere = filiere;
+        _cycle = cycle;
       });
     }
   }
 
   String get _initiales {
-    final parts = _nomComplet.trim().split(' ');
-    if (parts.isEmpty || _nomComplet.isEmpty) return '?';
-    if (parts.length == 1) return parts[0][0].toUpperCase();
+    final trimmed = _nomComplet.trim();
+    if (trimmed.isEmpty) return '?';
+
+    final parts = trimmed.split(RegExp(r'\s+'));
+    if (parts.length == 1) {
+      return parts[0][0].toUpperCase();
+    }
+
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
@@ -75,35 +82,24 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: const Color(0xFFF7F8FA),
         body: Column(
           children: [
-            // ── Header ────────────────────────────────────────
             ProfileHeader(
               initiales: _initiales,
               nomAffiche: _nomAffiche,
               email: _email,
             ),
-
-            // ── Contenu ──────────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: Column(
                   children: [
-                    const SizedBox(height: 8),
-
-                    // Carte infos
                     ProfileInfoCard(
                       nomAffiche: _nomAffiche,
                       email: _email,
                       filiere: _filiere,
                       cycle: _cycle,
                     ),
-
-                    const SizedBox(height: 24),
-
-                    // Bouton déconnexion
+                    const SizedBox(height: 20),
                     const ProfileLogoutButton(),
-
-                    const SizedBox(height: 8),
                   ],
                 ),
               ),

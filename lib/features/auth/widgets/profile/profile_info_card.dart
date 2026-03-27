@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
+import '../../../../core/theme/app_theme.dart';
 
 class ProfileInfoCard extends StatelessWidget {
   final String nomAffiche;
@@ -20,44 +19,38 @@ class ProfileInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: AppTheme.shadowSM,
       ),
       child: Column(
         children: [
-          ProfileInfoRow(
-            icon: Icons.person_rounded,
-            iconBg: Colors.blue.shade50,
-            iconColor: Colors.blue.shade400,
+          _ProfileRow(
+            icon: Icons.person_outline_rounded,
+            iconColor: const Color(0xFF3B82F6),
+            bgColor: const Color(0xFFEFF6FF),
             label: 'Nom complet',
-            value: nomAffiche,
+            value: nomAffiche.isNotEmpty ? nomAffiche : '—',
           ),
-          ProfileInfoRow(
-            icon: Icons.email_rounded,
-            iconBg: Colors.teal.shade50,
-            iconColor: Colors.teal.shade400,
+          _ProfileRow(
+            icon: Icons.mail_outline_rounded,
+            iconColor: const Color(0xFF0891B2),
+            bgColor: const Color(0xFFECFEFF),
             label: 'Email',
             value: email.isNotEmpty ? email : '—',
           ),
-          ProfileInfoRow(
+          _ProfileRow(
             icon: Icons.account_tree_rounded,
-            iconBg: Colors.orange.shade50,
-            iconColor: asmOrange,
+            iconColor: AppTheme.primary,
+            bgColor: AppTheme.primarySoft,
             label: 'Filière',
             value: filiere.isNotEmpty ? filiere : '—',
           ),
-          ProfileInfoRow(
+          _ProfileRow(
             icon: Icons.workspace_premium_rounded,
-            iconBg: Colors.purple.shade50,
-            iconColor: Colors.purple.shade400,
+            iconColor: const Color(0xFF8B5CF6),
+            bgColor: const Color(0xFFF5F3FF),
             label: 'Cycle',
             value: cycle.isNotEmpty ? cycle : '—',
             isLast: true,
@@ -68,19 +61,18 @@ class ProfileInfoCard extends StatelessWidget {
   }
 }
 
-class ProfileInfoRow extends StatelessWidget {
+class _ProfileRow extends StatelessWidget {
   final IconData icon;
-  final Color iconBg;
   final Color iconColor;
+  final Color bgColor;
   final String label;
   final String value;
   final bool isLast;
 
-  const ProfileInfoRow({
-    super.key,
+  const _ProfileRow({
     required this.icon,
-    required this.iconBg,
     required this.iconColor,
+    required this.bgColor,
     required this.label,
     required this.value,
     this.isLast = false,
@@ -91,33 +83,44 @@ class ProfileInfoRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: BorderRadius.circular(10),
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSM),
                 ),
-                child: Icon(icon, size: 16, color: iconColor),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: iconColor,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label,
-                        style: TextStyle(
-                            color: Colors.grey.shade400, fontSize: 11)),
-                    const SizedBox(height: 3),
-                    Text(value,
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        )),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textSecond,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textPrimary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -125,11 +128,12 @@ class ProfileInfoRow extends StatelessWidget {
           ),
         ),
         if (!isLast)
-          Divider(
-              height: 1,
-              color: Colors.grey.shade100,
-              indent: 16,
-              endIndent: 16),
+          const Divider(
+            height: 1,
+            color: AppTheme.border,
+            indent: 16,
+            endIndent: 16,
+          ),
       ],
     );
   }

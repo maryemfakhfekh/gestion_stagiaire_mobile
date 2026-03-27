@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../logic/internship_bloc.dart';
 import '../logic/internship_event.dart';
 import '../logic/internship_state.dart';
@@ -10,9 +11,6 @@ import '../widgets/upload/upload_stepper_card.dart';
 import '../widgets/upload/upload_drop_zone.dart';
 import '../widgets/upload/upload_file_preview.dart';
 import '../widgets/upload/upload_success_sheet.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
-const Color asmOrangeDark = Color(0xFFE65100);
 
 @RoutePage()
 class UploadCvPage extends StatefulWidget {
@@ -27,12 +25,12 @@ class _UploadCvPageState extends State<UploadCvPage>
     with TickerProviderStateMixin {
   String? _filePath;
   String? _fileName;
-  int? _fileSize;
+  int?    _fileSize;
 
   late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
+  late Animation<double>   _pulseAnimation;
   late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
+  late Animation<double>   _fadeAnimation;
 
   @override
   void initState() {
@@ -41,16 +39,17 @@ class _UploadCvPageState extends State<UploadCvPage>
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     )..repeat(reverse: true);
-    _pulseAnimation = Tween<double>(begin: 0.93, end: 1.07).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(
+          parent: _pulseController, curve: Curves.easeInOut),
     );
 
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     )..forward();
-    _fadeAnimation =
-        CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
+    _fadeAnimation = CurvedAnimation(
+        parent: _fadeController, curve: Curves.easeOut);
   }
 
   @override
@@ -77,7 +76,7 @@ class _UploadCvPageState extends State<UploadCvPage>
   }
 
   String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024)    return '$bytes B';
     if (bytes < 1048576) return '${(bytes / 1024).toStringAsFixed(1)} KB';
     return '${(bytes / 1048576).toStringAsFixed(1)} MB';
   }
@@ -98,20 +97,23 @@ class _UploadCvPageState extends State<UploadCvPage>
         } else if (state is InternshipError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Colors.red.shade600,
+              backgroundColor: AppTheme.error,
               behavior: SnackBarBehavior.floating,
               margin: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius:
+                BorderRadius.circular(AppTheme.radiusSM),
+              ),
               content: Row(
                 children: [
                   const Icon(Icons.error_outline,
                       color: Colors.white, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(state.message,
-                        style: const TextStyle(
-                            color: Colors.white, fontFamily: 'Poppins')),
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -120,44 +122,43 @@ class _UploadCvPageState extends State<UploadCvPage>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F8FA),
+        backgroundColor: AppTheme.background,
         body: Column(
           children: [
-            // ── Header orange ────────────────────────────────
+
+            // ── Header ────────────────────────────────
             const UploadHeader(),
-            // ── Corps scrollable ─────────────────────────────
+
+            Container(height: 1, color: AppTheme.border),
+
+            // ── Corps ─────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Stepper card
-                    const UploadStepperCard(),
-                    const SizedBox(height: 20),
 
-                    // Titre
-                    const Text(
+                    // ── Stepper ──────────────────────
+                    const UploadStepperCard(),
+                    const SizedBox(height: 24),
+
+                    // ── Titre section ────────────────
+                    Text(
                       'Votre CV',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'Poppins',
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    const Text(
                       'Format PDF uniquement · Max 5 MB',
                       style: TextStyle(
-                        color: Colors.grey.shade400,
+                        color: AppTheme.textLight,
                         fontSize: 13,
-                        fontFamily: 'Poppins',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Zone upload
+                    // ── Zone upload / Preview ─────────
                     FadeTransition(
                       opacity: _fadeAnimation,
                       child: _filePath == null
@@ -175,37 +176,42 @@ class _UploadCvPageState extends State<UploadCvPage>
 
                     const SizedBox(height: 20),
 
-                    // Note info
+                    // ── Note info ─────────────────────
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: asmOrange.withOpacity(0.07),
-                        borderRadius: BorderRadius.circular(12),
-                        border:
-                        Border.all(color: asmOrange.withOpacity(0.2)),
+                        color: AppTheme.primarySoft,
+                        borderRadius:
+                        BorderRadius.circular(AppTheme.radiusSM),
+                        border: Border.all(
+                          color: AppTheme.primary.withOpacity(0.15),
+                        ),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(5),
+                            width: 28, height: 28,
                             decoration: BoxDecoration(
-                              color: asmOrange.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(6),
+                              color: AppTheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusXS),
                             ),
-                            child: const Icon(Icons.info_outline_rounded,
-                                color: asmOrange, size: 14),
+                            child: const Icon(
+                              Icons.info_outline_rounded,
+                              color: AppTheme.primary,
+                              size: 14,
+                            ),
                           ),
                           const SizedBox(width: 10),
-                          Expanded(
+                          const Expanded(
                             child: Text(
                               'Votre candidature sera créée avec le statut EN_ATTENTE. '
                                   "L'encadrant sera notifié de votre dépôt.",
                               style: TextStyle(
-                                color: Colors.grey.shade600,
+                                color: AppTheme.textSecond,
                                 fontSize: 12,
                                 height: 1.6,
-                                fontFamily: 'Poppins',
                               ),
                             ),
                           ),
@@ -215,7 +221,7 @@ class _UploadCvPageState extends State<UploadCvPage>
 
                     const SizedBox(height: 20),
 
-                    // Bouton soumettre
+                    // ── Bouton soumettre ─────────────
                     BlocBuilder<InternshipBloc, InternshipState>(
                       builder: (context, state) {
                         final isLoading = state is InternshipLoading;
@@ -223,20 +229,23 @@ class _UploadCvPageState extends State<UploadCvPage>
                           children: [
                             if (_filePath == null && !isLoading)
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
+                                padding:
+                                const EdgeInsets.only(bottom: 12),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.arrow_upward_rounded,
-                                        size: 14,
-                                        color: Colors.grey.shade400),
-                                    const SizedBox(width: 4),
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.arrow_upward_rounded,
+                                      size: 14,
+                                      color: AppTheme.textLight,
+                                    ),
+                                    SizedBox(width: 4),
                                     Text(
                                       'Sélectionnez un fichier pour continuer',
                                       style: TextStyle(
-                                        color: Colors.grey.shade400,
+                                        color: AppTheme.textLight,
                                         fontSize: 12,
-                                        fontFamily: 'Poppins',
                                       ),
                                     ),
                                   ],
@@ -244,44 +253,44 @@ class _UploadCvPageState extends State<UploadCvPage>
                               ),
                             SizedBox(
                               width: double.infinity,
-                              height: 54,
+                              height: 52,
                               child: ElevatedButton(
-                                onPressed: (_filePath != null && !isLoading)
+                                onPressed:
+                                (_filePath != null && !isLoading)
                                     ? () => _submit(context)
                                     : null,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: asmOrange,
-                                  disabledBackgroundColor:
-                                  Colors.grey.shade200,
+                                  backgroundColor: AppTheme.primary,
+                                  disabledBackgroundColor: AppTheme.border,
                                   foregroundColor: Colors.white,
                                   disabledForegroundColor:
-                                  Colors.grey.shade400,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
+                                  AppTheme.textLight,
                                   elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusMD),
+                                  ),
                                 ),
                                 child: isLoading
                                     ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
+                                  width: 22, height: 22,
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
                                     strokeWidth: 2.5,
                                   ),
                                 )
-                                    : const Row(
+                                    : Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.send_rounded, size: 18),
+                                  children: const [
+                                    Icon(Icons.send_rounded,
+                                        size: 18),
                                     SizedBox(width: 10),
                                     Text(
                                       'Soumettre ma candidature',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
-                                        fontFamily: 'Poppins',
                                       ),
                                     ),
                                   ],
@@ -292,6 +301,7 @@ class _UploadCvPageState extends State<UploadCvPage>
                         );
                       },
                     ),
+
                     const SizedBox(height: 24),
                   ],
                 ),

@@ -1,9 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../data/models/sujet_model.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
 
 class SubjectApplyButton extends StatelessWidget {
   final SujetModel sujet;
@@ -14,11 +13,11 @@ class SubjectApplyButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade100)),
+        color: AppTheme.surface,
+        border: Border(top: BorderSide(color: AppTheme.border)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -27,46 +26,57 @@ class SubjectApplyButton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+
+          // ── Message si indisponible ──────────────────
           if (!sujet.estDisponible) ...[
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 10),
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.red.shade100),
+                color: const Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+                border: Border.all(
+                    color: AppTheme.error.withOpacity(0.2)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.info_outline_rounded,
-                      size: 14, color: Colors.red.shade400),
+                      size: 14, color: AppTheme.error),
                   const SizedBox(width: 6),
                   Text(
                     "Ce sujet n'accepte plus de candidatures",
                     style: TextStyle(
-                        color: Colors.red.shade400, fontSize: 12),
+                      color: AppTheme.error,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
             ),
           ],
+
+          // ── Bouton postuler ──────────────────────────
           SizedBox(
             width: double.infinity,
-            height: 54,
+            height: 52,
             child: ElevatedButton(
               onPressed: sujet.estDisponible
                   ? () => context.router
                   .push(UploadCvRoute(sujetId: sujet.id))
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: asmOrange,
-                disabledBackgroundColor: Colors.grey.shade200,
+                backgroundColor: AppTheme.primary,
+                disabledBackgroundColor: AppTheme.border,
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.grey.shade400,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                disabledForegroundColor: AppTheme.textLight,
                 elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(AppTheme.radiusMD),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +93,7 @@ class SubjectApplyButton extends StatelessWidget {
                         ? 'Postuler à ce sujet'
                         : 'Sujet complet',
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.2,
                     ),

@@ -41,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
             // Logo ASM
             Image.asset(
               "assets/images/logo_asm.png",
-              height: 100,
+              height: 70 ,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 20),

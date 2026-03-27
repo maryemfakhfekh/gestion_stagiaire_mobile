@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../data/models/sujet_model.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
 
 class SubjectInfoCard extends StatelessWidget {
   final SujetModel sujet;
@@ -12,16 +11,10 @@ class SubjectInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: AppTheme.shadowSM,
       ),
       child: Row(
         children: [
@@ -29,14 +22,16 @@ class SubjectInfoCard extends StatelessWidget {
             icon: Icons.school_rounded,
             label: 'Filière',
             value: sujet.filiereCible,
-            color: asmOrange,
+            color: AppTheme.primary,
+            bg: AppTheme.primarySoft,
           ),
           _VertDivider(),
           _InfoItem(
             icon: Icons.workspace_premium_rounded,
             label: 'Cycle',
             value: sujet.cycleCible,
-            color: const Color(0xFF4ECDC4),
+            color: const Color(0xFF0891B2),
+            bg: const Color(0xFFECFEFF),
           ),
           _VertDivider(),
           _InfoItem(
@@ -46,8 +41,11 @@ class SubjectInfoCard extends StatelessWidget {
             label: 'Statut',
             value: sujet.estDisponible ? 'Ouvert' : 'Fermé',
             color: sujet.estDisponible
-                ? const Color(0xFF4CAF50)
-                : Colors.red.shade400,
+                ? AppTheme.success
+                : AppTheme.error,
+            bg: sujet.estDisponible
+                ? const Color(0xFFF0FDF4)
+                : const Color(0xFFFEF2F2),
           ),
         ],
       ),
@@ -59,10 +57,9 @@ class _VertDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 1,
-      height: 40,
+      width: 1, height: 40,
       margin: const EdgeInsets.symmetric(horizontal: 12),
-      color: Colors.grey.shade100,
+      color: AppTheme.border,
     );
   }
 }
@@ -72,12 +69,14 @@ class _InfoItem extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
+  final Color bg;
 
   const _InfoItem({
     required this.icon,
     required this.label,
     required this.value,
     required this.color,
+    required this.bg,
   });
 
   @override
@@ -86,22 +85,27 @@ class _InfoItem extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 36, height: 36,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: bg,
+              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
             ),
             child: Icon(icon, size: 16, color: color),
           ),
           const SizedBox(height: 6),
-          Text(label,
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 10)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppTheme.textLight,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 2),
           Text(
             value,
             style: const TextStyle(
-              color: Colors.black87,
+              color: AppTheme.textPrimary,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),

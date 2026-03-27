@@ -23,7 +23,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final token = await authRepository.getToken();
       if (token != null && token.isNotEmpty) {
-        emit(AuthAuthenticated());
+        final role = await authRepository.getRole() ?? '';
+        emit(AuthAuthenticated(role: role));
       } else {
         emit(AuthUnauthenticated());
       }
@@ -39,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await authRepository.register(event.user);
-      emit(AuthSuccess()); // ✅ AuthSuccess uniquement pour l'inscription
+      emit(AuthSuccess());
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
@@ -52,9 +53,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final token = await authRepository.login(event.email, event.password);
+
       if (token.isNotEmpty) {
-        await _storage.write(key: 'email', value: event.email);
-        emit(AuthAuthenticated()); // ✅ AuthAuthenticated pour le login
+        final role = await authRepository.getRole() ?? '';
+        print('>>> [BLOC] Login réussi - Rôle : $role');
+        emit(AuthAuthenticated(role: role));
       } else {
         emit(AuthFailure("Erreur d'authentification (Token vide)"));
       }

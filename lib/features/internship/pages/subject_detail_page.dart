@@ -1,13 +1,12 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../data/models/sujet_model.dart';
 import '../widgets/detail/Section_card.dart';
 import '../widgets/detail/Skill_tag.dart';
 import '../widgets/detail/Subject_apply_button.dart';
 import '../widgets/detail/Subject_detail_header.dart';
 import '../widgets/detail/Subject_info_card.dart';
-
-const Color asmOrange = Color(0xFFF28C28);
 
 @RoutePage()
 class SubjectDetailPage extends StatelessWidget {
@@ -16,10 +15,10 @@ class SubjectDetailPage extends StatelessWidget {
 
   static const _domainIcons = {
     'informatique': Icons.code_rounded,
-    'génie civil': Icons.architecture_rounded,
+    'génie civil':  Icons.architecture_rounded,
     'électronique': Icons.electrical_services_rounded,
-    'mécanique': Icons.settings_rounded,
-    'gestion': Icons.bar_chart_rounded,
+    'mécanique':    Icons.settings_rounded,
+    'gestion':      Icons.bar_chart_rounded,
   };
 
   @override
@@ -28,37 +27,51 @@ class SubjectDetailPage extends StatelessWidget {
     final icon = _domainIcons.entries
         .firstWhere(
           (e) => domainKey.contains(e.key),
-      orElse: () => const MapEntry('default', Icons.work_outline_rounded),
+      orElse: () =>
+      const MapEntry('default', Icons.work_outline_rounded),
     )
         .value;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: AppTheme.background,
       body: Column(
         children: [
           SubjectDetailHeader(sujet: sujet, domainIcon: icon),
+
+          // ── Divider ───────────────────────────────────
+          Container(height: 1, color: AppTheme.border),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   const SizedBox(height: 4),
+
+                  // ── Info card ─────────────────────────
                   SubjectInfoCard(sujet: sujet),
+
                   const SizedBox(height: 16),
+
+                  // ── Description ───────────────────────
                   SectionCard(
                     title: 'Description',
                     icon: Icons.description_outlined,
                     child: Text(
                       sujet.description,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
+                      style: const TextStyle(
+                        color: AppTheme.textSecond,
                         fontSize: 14,
                         height: 1.75,
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
+                  // ── Compétences ───────────────────────
                   if (sujet.competencesCibles.isNotEmpty) ...[
                     SectionCard(
                       title: 'Compétences requises',
@@ -73,7 +86,10 @@ class SubjectDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                   ],
+
+                  // ── Date publication ──────────────────
                   _PublicationDate(date: sujet.datePublication),
+
                   const SizedBox(height: 16),
                 ],
               ),
@@ -102,37 +118,46 @@ class _PublicationDate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade100),
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: AppTheme.shadowSM,
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 36, height: 36,
             decoration: BoxDecoration(
-              color: asmOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: AppTheme.primarySoft,
+              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
             ),
-            child: const Icon(Icons.calendar_today_rounded,
-                size: 14, color: asmOrange),
+            child: const Icon(
+              Icons.calendar_today_rounded,
+              size: 16,
+              color: AppTheme.primary,
+            ),
           ),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Date de publication',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                style: TextStyle(
+                  color: AppTheme.textLight,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              const SizedBox(height: 2),
               Text(
                 _formatDate(date),
                 style: const TextStyle(
-                  color: Colors.black87,
+                  color: AppTheme.textPrimary,
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

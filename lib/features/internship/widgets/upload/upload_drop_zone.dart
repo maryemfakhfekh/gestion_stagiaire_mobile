@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../pages/upload_cv_page.dart' show asmOrange;
+import '../../../../core/theme/app_theme.dart';
 
 class UploadDropZone extends StatelessWidget {
   final Animation<double> pulseAnimation;
@@ -16,92 +16,97 @@ class UploadDropZone extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 240,
+        height: 220,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLG),
           border: Border.all(
-            color: asmOrange.withOpacity(0.25),
-            width: 2,
+            color: AppTheme.primary.withOpacity(0.2),
+            width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: AppTheme.shadowSM,
         ),
         child: Stack(
           children: [
-            // Motif de points en arrière-plan
+            // ── Motif dots ───────────────────────────────
             Positioned.fill(
-              child: CustomPaint(painter: _DotPatternPainter()),
+              child: ClipRRect(
+                borderRadius:
+                BorderRadius.circular(AppTheme.radiusLG),
+                child: CustomPaint(
+                  painter: _DotPatternPainter(),
+                ),
+              ),
             ),
+
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+
+                  // ── Icône animée ──────────────────────
                   ScaleTransition(
                     scale: pulseAnimation,
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 72, height: 72,
                       decoration: BoxDecoration(
-                        color: asmOrange.withOpacity(0.1),
+                        color: AppTheme.primarySoft,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: asmOrange.withOpacity(0.3), width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: asmOrange.withOpacity(0.15),
-                            blurRadius: 20,
-                            spreadRadius: 4,
-                          ),
-                        ],
+                          color: AppTheme.primary.withOpacity(0.2),
+                          width: 2,
+                        ),
                       ),
                       child: const Icon(
                         Icons.upload_file_rounded,
-                        color: asmOrange,
-                        size: 36,
+                        color: AppTheme.primary,
+                        size: 32,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+
+                  const SizedBox(height: 16),
+
+                  // ── Titre ─────────────────────────────
                   const Text(
                     'Appuyer pour sélectionner',
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      fontFamily: 'Poppins',
+                      color: AppTheme.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 6),
+
+                  const SizedBox(height: 4),
+
                   Text(
                     'PDF uniquement · 5 MB max',
-                    style: TextStyle(
-                      color: Colors.grey.shade400,
+                    style: const TextStyle(
                       fontSize: 13,
-                      fontFamily: 'Poppins',
+                      color: AppTheme.textLight,
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
+                  // ── Bouton parcourir ──────────────────
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: asmOrange.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: asmOrange.withOpacity(0.2)),
+                      color: AppTheme.primarySoft,
+                      borderRadius:
+                      BorderRadius.circular(AppTheme.radiusSM),
+                      border: Border.all(
+                        color: AppTheme.primary.withOpacity(0.2),
+                      ),
                     ),
                     child: const Text(
                       'Parcourir les fichiers →',
                       style: TextStyle(
-                        color: asmOrange,
+                        color: AppTheme.primary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
                       ),
                     ),
                   ),
@@ -119,10 +124,10 @@ class _DotPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = asmOrange.withOpacity(0.06)
+      ..color = AppTheme.primary.withOpacity(0.05)
       ..style = PaintingStyle.fill;
     const spacing = 20.0;
-    const radius = 1.5;
+    const radius  = 1.5;
     for (double x = spacing; x < size.width; x += spacing) {
       for (double y = spacing; y < size.height; y += spacing) {
         canvas.drawCircle(Offset(x, y), radius, paint);
