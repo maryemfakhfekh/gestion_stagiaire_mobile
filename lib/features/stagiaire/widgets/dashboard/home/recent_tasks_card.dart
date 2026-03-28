@@ -12,79 +12,65 @@ class RecentTasksCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        // ── Titre section style Jira ──────────────────
         Row(
           children: [
-            const Text(
-              'ACTIVITÉ RÉCENTE',
-              style: TextStyle(
-                color: AppTheme.textLight,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-              ),
-            ),
+            const Text('ACTIVITÉ RÉCENTE',
+                style: TextStyle(
+                    color: AppTheme.textLight,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2)),
             const Spacer(),
-            Text(
-              'Voir tout',
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            Text('Voir tout',
+                style: TextStyle(
+                    color: AppTheme.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600)),
           ],
         ),
+        const SizedBox(height: 12),
 
-        const SizedBox(height: 10),
-
-        // ── Liste activité style Jira ─────────────────
+        // Liste tâches
         Container(
           decoration: BoxDecoration(
             color: AppTheme.surface,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.border),
+            boxShadow: AppTheme.shadowSM,
           ),
           child: Column(
             children: recent.asMap().entries.map((entry) {
-              final index = entry.key;
-              final tache = entry.value;
-              final isLast = index == recent.length - 1;
-              return _JiraTaskRow(tache: tache, isLast: isLast);
+              final isLast = entry.key == recent.length - 1;
+              return _TaskRow(tache: entry.value, isLast: isLast);
             }).toList(),
           ),
         ),
 
-        const SizedBox(height: 14),
+        const SizedBox(height: 20),
 
-        // ── Quick access style Jira ───────────────────
-        const Text(
-          'ACCÈS RAPIDE',
-          style: TextStyle(
-            color: AppTheme.textLight,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-          ),
-        ),
-
-        const SizedBox(height: 10),
+        // Accès rapide
+        const Text('ACCÈS RAPIDE',
+            style: TextStyle(
+                color: AppTheme.textLight,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2)),
+        const SizedBox(height: 12),
 
         Row(
           children: [
-            _buildQuickAccess(
-              icon: Icons.dashboard_rounded,
-              label: 'GS Board',
-              subtitle: 'Kanban',
-              color: const Color(0xFF6366F1),
+            _quickAccess(
+              Icons.dashboard_rounded,
+              'GS Board',
+              'Kanban',
+              const Color(0xFF6366F1),
             ),
-            const SizedBox(width: 10),
-            _buildQuickAccess(
-              icon: Icons.description_outlined,
-              label: 'Rapport',
-              subtitle: 'PDF',
-              color: AppTheme.primary,
+            const SizedBox(width: 12),
+            _quickAccess(
+              Icons.description_outlined,
+              'Rapport',
+              'PDF',
+              AppTheme.primary,
             ),
           ],
         ),
@@ -92,27 +78,24 @@ class RecentTasksCard extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAccess({
-    required IconData icon,
-    required String label,
-    required String subtitle,
-    required Color color,
-  }) {
+  Widget _quickAccess(
+      IconData icon, String label, String sub, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppTheme.border),
+          boxShadow: AppTheme.shadowSM,
         ),
         child: Row(
           children: [
             Container(
-              width: 36, height: 36,
+              width: 38, height: 38,
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 18),
             ),
@@ -120,21 +103,14 @@ class RecentTasksCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: AppTheme.textLight,
-                    fontSize: 10,
-                  ),
-                ),
+                Text(label,
+                    style: const TextStyle(
+                        color: AppTheme.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700)),
+                Text(sub,
+                    style: const TextStyle(
+                        color: AppTheme.textLight, fontSize: 11)),
               ],
             ),
           ],
@@ -144,36 +120,32 @@ class RecentTasksCard extends StatelessWidget {
   }
 }
 
-// ── Row tâche style Jira ───────────────────────────────────────────
-class _JiraTaskRow extends StatelessWidget {
+class _TaskRow extends StatelessWidget {
   final Tache tache;
   final bool isLast;
-  const _JiraTaskRow({required this.tache, required this.isLast});
+  const _TaskRow({required this.tache, required this.isLast});
 
-  Color get _statutColor {
+  Color get _color {
     switch (tache.statut) {
-      case TacheStatut.terminee:  return AppTheme.success;
-      case TacheStatut.enCours:   return AppTheme.warning;
-      default:                    return AppTheme.textLight;
+      case TacheStatut.terminee: return AppTheme.success;
+      case TacheStatut.enCours: return AppTheme.primary;
+      default: return AppTheme.textLight;
     }
   }
 
-  String get _statutLabel {
+  String get _label {
     switch (tache.statut) {
-      case TacheStatut.terminee:  return 'DONE';
-      case TacheStatut.enCours:   return 'IN PROGRESS';
-      default:                    return 'TO DO';
+      case TacheStatut.terminee: return 'DONE';
+      case TacheStatut.enCours: return 'EN COURS';
+      default: return 'TO DO';
     }
   }
 
-  IconData get _statutIcon {
+  IconData get _icon {
     switch (tache.statut) {
-      case TacheStatut.terminee:
-        return Icons.check_circle_rounded;
-      case TacheStatut.enCours:
-        return Icons.radio_button_checked_rounded;
-      default:
-        return Icons.circle_outlined;
+      case TacheStatut.terminee: return Icons.check_circle_rounded;
+      case TacheStatut.enCours: return Icons.radio_button_checked_rounded;
+      default: return Icons.circle_outlined;
     }
   }
 
@@ -182,75 +154,56 @@ class _JiraTaskRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16, vertical: 13),
           child: Row(
             children: [
-
-              // Icône statut style Jira
-              Icon(_statutIcon, color: _statutColor, size: 16),
-
-              const SizedBox(width: 10),
-
-              // Titre tâche
+              Icon(_icon, color: _color, size: 18),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      tache.titre,
-                      style: TextStyle(
-                        color: tache.statut == TacheStatut.terminee
-                            ? AppTheme.textLight
-                            : AppTheme.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        decoration: tache.statut == TacheStatut.terminee
-                            ? TextDecoration.lineThrough
-                            : null,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(tache.titre,
+                        style: TextStyle(
+                            color: tache.statut == TacheStatut.terminee
+                                ? AppTheme.textLight
+                                : AppTheme.textPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            decoration:
+                            tache.statut == TacheStatut.terminee
+                                ? TextDecoration.lineThrough
+                                : null),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 2),
-                    Text(
-                      'GS-${tache.id} · Mis à jour récemment',
-                      style: const TextStyle(
-                        color: AppTheme.textLight,
-                        fontSize: 10,
-                      ),
-                    ),
+                    Text('${tache.issueKey} · Mis à jour récemment',
+                        style: const TextStyle(
+                            color: AppTheme.textLight, fontSize: 10)),
                   ],
                 ),
               ),
-
               const SizedBox(width: 8),
-
-              // Badge statut style Jira
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 3,
-                ),
+                    horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: _statutColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-                  border: Border.all(
-                    color: _statutColor.withOpacity(0.2),
-                  ),
+                  color: _color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
-                  _statutLabel,
-                  style: TextStyle(
-                    color: _statutColor,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.3,
-                  ),
-                ),
+                child: Text(_label,
+                    style: TextStyle(
+                        color: _color,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.3)),
               ),
             ],
           ),
         ),
-        if (!isLast) Container(height: 1, color: AppTheme.border),
+        if (!isLast)
+          Container(height: 1, color: AppTheme.border),
       ],
     );
   }

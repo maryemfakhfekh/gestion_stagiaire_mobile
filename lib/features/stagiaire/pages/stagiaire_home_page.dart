@@ -1,6 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/di/injection.dart';
 import '../../../core/theme/app_theme.dart';
+import '../logic/stagiaire_bloc.dart';
 import 'candidature_pending_page.dart';
 import 'stagiaire_dashboard_page.dart';
 
@@ -8,17 +11,42 @@ import 'stagiaire_dashboard_page.dart';
 class StagiaireHomePage extends StatelessWidget {
   const StagiaireHomePage({super.key});
 
-  // ── 🔧 Change cette valeur pour tester les deux interfaces ──
-  // "EN_ATTENTE" → page d'attente
-  // "ACCEPTEE"   → dashboard complet
-  // TODO: remplacer par la vraie valeur provenant du BLoC (Phase 6)
-  static const String _statutTest = "ACCEPTEE";  // ← modifie ici pour basculer
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<StagiaireBloc>()..add(LoadDossier()),
+      child: const _StagiaireHomeView(),
+    );
+  }
+}
+
+class _StagiaireHomeView extends StatelessWidget {
+  const _StagiaireHomeView();
 
   @override
   Widget build(BuildContext context) {
-    return switch (_statutTest) {
-      "ACCEPTEE"   => const StaigaireDashboardPage(),  // ← nom corrigé avec la faute de frappe
-      _            => const CandidaturePendingPage(),
-    };
+    return BlocBuilder<StagiaireBloc, StagiaireState>(
+      builder: (context, state) {
+
+        if (state is StagiaireLoading || state is StagiaireInitial) {
+          return const Scaffold(
+            backgroundColor: AppTheme.background,
+            body: Center(
+              child: CircularProgressIndicator(color: AppTheme.primary),
+            ),
+          );
+        }
+
+        if (state is StagiaireError) {
+          return const CandidaturePendingPage();
+        }
+
+        if (state is StagiaireLoaded) {
+          return StaigaireDashboardPage(dossier: state.dossier);
+        }
+
+        return const CandidaturePendingPage();
+      },
+    );
   }
 }

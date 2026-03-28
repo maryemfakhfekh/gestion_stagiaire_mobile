@@ -16,70 +16,74 @@ class _RapportTabState extends State<RapportTab> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
           // ── Titre ─────────────────────────────────────
-          const Text(
-            'Rapport de stage',
-            style: TextStyle(
-              color: AppTheme.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.3,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Déposez votre rapport final en PDF',
-            style: TextStyle(
-              color: AppTheme.textSecond,
-              fontSize: 13,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.primarySoft,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.description_rounded,
+                    color: AppTheme.primary, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text('Rapport de stage',
+                      style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.4)),
+                  Text('Déposez votre rapport final en PDF',
+                      style: TextStyle(
+                          color: AppTheme.textSecond, fontSize: 13)),
+                ],
+              ),
+            ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
           // ── Statut ────────────────────────────────────
           RapportStatusCard(estDepose: _estDepose),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
-          // ── Zone upload ───────────────────────────────
           if (!_estDepose) ...[
-            const Text(
-              'Sélectionner votre rapport',
-              style: TextStyle(
-                color: AppTheme.textPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            // ── Upload ───────────────────────────────────
+            const Text('Sélectionner votre rapport',
+                style: TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
-            const Text(
-              'Format PDF uniquement · Max 10 MB',
-              style: TextStyle(
-                color: AppTheme.textLight,
-                fontSize: 12,
-              ),
-            ),
+            const Text('Format PDF uniquement · Max 10 MB',
+                style: TextStyle(
+                    color: AppTheme.textLight, fontSize: 12)),
             const SizedBox(height: 12),
             const RapportUploadZone(),
             const SizedBox(height: 20),
 
-            // ── Bouton soumettre ──────────────────────
+            // ── Bouton soumettre ──────────────────────────
             SizedBox(
               width: double.infinity,
-              height: 52,
+              height: 54,
               child: ElevatedButton(
                 onPressed: () => setState(() => _estDepose = true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
                 child: const Row(
@@ -87,54 +91,46 @@ class _RapportTabState extends State<RapportTab> {
                   children: [
                     Icon(Icons.send_rounded, size: 18),
                     SizedBox(width: 10),
-                    Text(
-                      'Soumettre le rapport',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text('Soumettre le rapport',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
             ),
           ],
 
+          const SizedBox(height: 20),
+
           // ── Note info ─────────────────────────────────
-          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppTheme.primarySoft,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: AppTheme.primary.withOpacity(0.15),
-              ),
+                  color: AppTheme.primary.withOpacity(0.15)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 28, height: 28,
+                  width: 32, height: 32,
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+                    color: AppTheme.primary.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.info_outline_rounded,
-                    color: AppTheme.primary,
-                    size: 14,
-                  ),
+                  child: const Icon(Icons.info_outline_rounded,
+                      color: AppTheme.primary, size: 16),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 const Expanded(
                   child: Text(
                     'Votre rapport sera consulté par votre encadrant et le service RH. Assurez-vous qu\'il est complet avant de le soumettre.',
                     style: TextStyle(
-                      color: AppTheme.textSecond,
-                      fontSize: 12,
-                      height: 1.6,
-                    ),
+                        color: AppTheme.textSecond,
+                        fontSize: 12,
+                        height: 1.6),
                   ),
                 ),
               ],

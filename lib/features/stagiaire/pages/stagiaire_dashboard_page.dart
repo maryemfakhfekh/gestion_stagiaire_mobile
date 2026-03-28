@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../data/models/stagiaire_model.dart';
 import '../widgets/dashboard/dashboard_header.dart';
 import '../widgets/dashboard/tabs/home_tab.dart';
 import '../widgets/dashboard/tabs/taches_tab.dart';
@@ -7,7 +8,8 @@ import '../widgets/dashboard/tabs/rapport_tab.dart';
 import '../widgets/dashboard/tabs/profil_tab.dart';
 
 class StaigaireDashboardPage extends StatefulWidget {
-  const StaigaireDashboardPage({super.key});
+  final StagiaireModel dossier;
+  const StaigaireDashboardPage({super.key, required this.dossier});
 
   @override
   State<StaigaireDashboardPage> createState() =>
@@ -17,82 +19,51 @@ class StaigaireDashboardPage extends StatefulWidget {
 class _StaigaireDashboardPageState extends State<StaigaireDashboardPage> {
   int _currentIndex = 0;
 
-  final List<Widget> _tabs = const [
-    HomeTab(),
-    TachesTab(),
-    RapportTab(),
-    ProfilTab(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final tabs = [
+      HomeTab(dossier: widget.dossier),
+      const TachesTab(),
+      const RapportTab(),
+      ProfilTab(dossier: widget.dossier),
+    ];
+
     return Scaffold(
       backgroundColor: AppTheme.background,
-
-      // ── Body complet ──────────────────────────────────
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-
-          // ── Header (inclut safe area) ─────────────────
-          const DashboardHeader(),
-
-          // ── Divider ───────────────────────────────────
+          DashboardHeader(dossier: widget.dossier),
           Container(height: 1, color: AppTheme.border),
-
-          // ── Contenu tab actif ─────────────────────────
           Expanded(
             child: IndexedStack(
               index: _currentIndex,
-              children: _tabs,
+              children: tabs,
             ),
           ),
         ],
       ),
-
-      // ── Bottom Navigation Bar ─────────────────────────
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: AppTheme.surface,
-          border: Border(
-            top: BorderSide(color: AppTheme.border),
-          ),
+          border: Border(top: BorderSide(color: AppTheme.border)),
           boxShadow: AppTheme.shadowMD,
         ),
         child: SafeArea(
           top: false,
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 8,
-            ),
+                horizontal: 12, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(
-                  index: 0,
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home_rounded,
-                  label: 'Accueil',
-                ),
-                _buildNavItem(
-                  index: 1,
-                  icon: Icons.checklist_outlined,
-                  activeIcon: Icons.checklist_rounded,
-                  label: 'Tâches',
-                ),
-                _buildNavItem(
-                  index: 2,
-                  icon: Icons.description_outlined,
-                  activeIcon: Icons.description_rounded,
-                  label: 'Rapport',
-                ),
-                _buildNavItem(
-                  index: 3,
-                  icon: Icons.person_outline_rounded,
-                  activeIcon: Icons.person_rounded,
-                  label: 'Profil',
-                ),
+                _navItem(0, Icons.home_outlined,
+                    Icons.home_rounded, 'Accueil'),
+                _navItem(1, Icons.checklist_outlined,
+                    Icons.checklist_rounded, 'Tâches'),
+                _navItem(2, Icons.description_outlined,
+                    Icons.description_rounded, 'Rapport'),
+                _navItem(3, Icons.person_outline_rounded,
+                    Icons.person_rounded, 'Profil'),
               ],
             ),
           ),
@@ -101,42 +72,40 @@ class _StaigaireDashboardPageState extends State<StaigaireDashboardPage> {
     );
   }
 
-  Widget _buildNavItem({
-    required int index,
-    required IconData icon,
-    required IconData activeIcon,
-    required String label,
-  }) {
+  Widget _navItem(int index, IconData icon, IconData activeIcon,
+      String label) {
     final isActive = _currentIndex == index;
-
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? AppTheme.primarySoft : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+          color: isActive
+              ? AppTheme.primary.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              color: isActive ? AppTheme.primary : AppTheme.textLight,
-              size: 22,
-            ),
+            Icon(isActive ? activeIcon : icon,
+                color: isActive
+                    ? AppTheme.primary
+                    : AppTheme.textLight,
+                size: 22),
             const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive ? AppTheme.primary : AppTheme.textLight,
-                fontSize: 11,
-                fontWeight:
-                isActive ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
+            Text(label,
+                style: TextStyle(
+                    color: isActive
+                        ? AppTheme.primary
+                        : AppTheme.textLight,
+                    fontSize: 11,
+                    fontWeight: isActive
+                        ? FontWeight.w700
+                        : FontWeight.w500)),
           ],
         ),
       ),

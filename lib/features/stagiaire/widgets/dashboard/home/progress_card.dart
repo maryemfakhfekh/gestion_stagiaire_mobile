@@ -22,7 +22,8 @@ class _ProgressCardState extends State<ProgressCard>
       duration: const Duration(milliseconds: 1200),
     )..forward();
     _progressAnimation = Tween<double>(begin: 0.0, end: widget.progress)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+        .animate(CurvedAnimation(
+        parent: _controller, curve: Curves.easeOut));
   }
 
   @override
@@ -36,85 +37,79 @@ class _ProgressCardState extends State<ProgressCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        // ── Titre section style Jira ──────────────────
-        const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(
-            'VUE D\'ENSEMBLE',
+        const Text('VUE D\'ENSEMBLE',
             style: TextStyle(
-              color: AppTheme.textLight,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ),
+                color: AppTheme.textLight,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2)),
+        const SizedBox(height: 12),
 
-        // ── Grid stats style Jira ─────────────────────
+        // Stats row
         Row(
           children: [
-            _buildStatBox(
-              value: '3',
-              label: 'Terminées',
-              color: AppTheme.success,
-              icon: Icons.check_circle_rounded,
-            ),
+            _buildStat('3', 'Terminées', AppTheme.success,
+                Icons.check_circle_rounded),
             const SizedBox(width: 10),
-            _buildStatBox(
-              value: '2',
-              label: 'En cours',
-              color: AppTheme.warning,
-              icon: Icons.radio_button_checked_rounded,
-            ),
+            _buildStat('2', 'En cours', AppTheme.primary,
+                Icons.radio_button_checked_rounded),
             const SizedBox(width: 10),
-            _buildStatBox(
-              value: '2',
-              label: 'À faire',
-              color: AppTheme.textSecond,
-              icon: Icons.circle_outlined,
-            ),
+            _buildStat('2', 'À faire', AppTheme.textLight,
+                Icons.circle_outlined),
           ],
         ),
 
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
 
-        // ── Barre progression style Jira ──────────────
+        // Progress bar card
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: AppTheme.surface,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.border),
+            boxShadow: AppTheme.shadowSM,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Text(
-                    'Progression du sprint',
-                    style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                  Container(
+                    width: 8, height: 8,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary,
+                      shape: BoxShape.circle,
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  const Text('Progression du sprint',
+                      style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700)),
                   const Spacer(),
                   AnimatedBuilder(
                     animation: _progressAnimation,
-                    builder: (context, _) => Text(
-                      '${(_progressAnimation.value * 100).toInt()}%',
-                      style: const TextStyle(
-                        color: AppTheme.primary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                    builder: (context, _) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primarySoft,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${(_progressAnimation.value * 100).toInt()}%',
+                        style: const TextStyle(
+                            color: AppTheme.primary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
               AnimatedBuilder(
                 animation: _progressAnimation,
                 builder: (context, _) => ClipRRect(
@@ -123,20 +118,15 @@ class _ProgressCardState extends State<ProgressCard>
                     value: _progressAnimation.value,
                     backgroundColor: AppTheme.border,
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppTheme.primary,
-                    ),
-                    minHeight: 6,
+                        AppTheme.primary),
+                    minHeight: 8,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Sprint 1 · 3 sur 7 tâches complétées',
-                style: TextStyle(
-                  color: AppTheme.textLight,
-                  fontSize: 11,
-                ),
-              ),
+              const SizedBox(height: 10),
+              const Text('Sprint 1 · 3 sur 7 tâches complétées',
+                  style: TextStyle(
+                      color: AppTheme.textLight, fontSize: 11)),
             ],
           ),
         ),
@@ -144,42 +134,32 @@ class _ProgressCardState extends State<ProgressCard>
     );
   }
 
-  Widget _buildStatBox({
-    required String value,
-    required String label,
-    required Color color,
-    required IconData icon,
-  }) {
+  Widget _buildStat(String value, String label, Color color, IconData icon) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppTheme.border),
+          boxShadow: AppTheme.shadowSM,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color, size: 16),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                color: color,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
+            const SizedBox(height: 10),
+            Text(value,
+                style: TextStyle(
+                    color: color,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900)),
             const SizedBox(height: 2),
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppTheme.textLight,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            Text(label,
+                style: const TextStyle(
+                    color: AppTheme.textLight,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500)),
           ],
         ),
       ),

@@ -1,121 +1,120 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../data/models/stagiaire_model.dart';
 
 class EncadrantCard extends StatelessWidget {
-  const EncadrantCard({super.key});
+  final EncadrantModel? encadrant;
+  const EncadrantCard({super.key, this.encadrant});
+
+  String get _initials {
+    if (encadrant == null) return '?';
+    final parts = encadrant!.nomComplet.trim().split(' ');
+    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    return encadrant!.nomComplet.substring(0, 2).toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        // ── Titre section style Jira ──────────────────
-        const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(
-            'MON ÉQUIPE',
+        const Text('MON ÉQUIPE',
             style: TextStyle(
-              color: AppTheme.textLight,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ),
-
-        // ── Card encadrant ────────────────────────────
+                color: AppTheme.textLight,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2)),
+        const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppTheme.surface,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMD),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.border),
+            boxShadow: AppTheme.shadowSM,
           ),
-          child: Row(
+          child: encadrant == null
+              ? Row(
             children: [
-
-              // Avatar circulaire style Jira
               Container(
-                width: 40, height: 40,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0052CC),
-                  shape: BoxShape.circle,
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.background,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTheme.border),
                 ),
-                child: const Center(
-                  child: Text(
-                    'MB',
-                    style: TextStyle(
-                      color: Colors.white,
+                child: const Icon(Icons.person_outline_rounded,
+                    color: AppTheme.textLight, size: 22),
+              ),
+              const SizedBox(width: 14),
+              const Text('Aucun encadrant affecté',
+                  style: TextStyle(
+                      color: AppTheme.textLight,
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                      fontStyle: FontStyle.italic)),
+            ],
+          )
+              : Row(
+            children: [
+              Container(
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A5F),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(_initials,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800)),
                 ),
               ),
-
-              const SizedBox(width: 12),
-
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Dr. Mohamed Ben Ali',
-                      style: TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
+                    Text(encadrant!.nomComplet,
+                        style: const TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Container(
-                          width: 7, height: 7,
+                          width: 6, height: 6,
                           decoration: const BoxDecoration(
-                            color: AppTheme.success,
-                            shape: BoxShape.circle,
-                          ),
+                              color: AppTheme.success,
+                              shape: BoxShape.circle),
                         ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          'En ligne · Encadrant',
-                          style: TextStyle(
-                            color: AppTheme.textSecond,
-                            fontSize: 11,
-                          ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(encadrant!.email,
+                              style: const TextStyle(
+                                  color: AppTheme.textSecond,
+                                  fontSize: 12),
+                              overflow: TextOverflow.ellipsis),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-
-              // Actions style Jira
-              Row(
-                children: [
-                  _buildAction(Icons.mail_outline_rounded),
-                  const SizedBox(width: 8),
-                  _buildAction(Icons.more_horiz_rounded),
-                ],
+              Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                  color: AppTheme.primarySoft,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.mail_outline_rounded,
+                    color: AppTheme.primary, size: 18),
               ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildAction(IconData icon) {
-    return Container(
-      width: 32, height: 32,
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-        border: Border.all(color: AppTheme.border),
-      ),
-      child: Icon(icon, size: 15, color: AppTheme.textSecond),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class PendingHeader extends StatelessWidget {
@@ -11,65 +10,51 @@ class PendingHeader extends StatelessWidget {
 
     return Container(
       color: AppTheme.surface,
-      padding: EdgeInsets.fromLTRB(16, topPadding + 12, 16, 16),
+      padding: EdgeInsets.fromLTRB(20, topPadding + 14, 20, 16),
       child: Row(
         children: [
-
-          // ── Icône gauche (logo app) ───────────────────
           Container(
-            width: 40, height: 40,
+            width: 42, height: 42,
             decoration: BoxDecoration(
-              color: AppTheme.primarySoft,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFF57C00), Color(0xFFFFB74D)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: AppTheme.shadowOrange,
             ),
-            child: const Icon(
-              Icons.school_rounded,
-              color: AppTheme.primary,
-              size: 20,
-            ),
+            child: const Icon(Icons.school_rounded,
+                color: Colors.white, size: 20),
           ),
-
-          const SizedBox(width: 12),
-
-          // ── Titre + sous-titre ────────────────────────
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text(
-                  'Mon Dossier',
-                  style: TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.3,
-                  ),
-                ),
+                Text('Mon Dossier',
+                    style: TextStyle(
+                        color: AppTheme.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3)),
                 SizedBox(height: 2),
-                Text(
-                  'Suivi de votre candidature',
-                  style: TextStyle(
-                    color: AppTheme.textLight,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text('Suivi de votre candidature',
+                    style: TextStyle(
+                        color: AppTheme.textLight,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500)),
               ],
             ),
           ),
-
-          // ── Badge statut ──────────────────────────────
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 6,
-            ),
+                horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF7ED),
-              borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+              color: const Color(0xFFFFF4ED),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.warning.withOpacity(0.3),
-              ),
+                  color: AppTheme.warning.withOpacity(0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -77,20 +62,16 @@ class PendingHeader extends StatelessWidget {
                 Container(
                   width: 6, height: 6,
                   decoration: const BoxDecoration(
-                    color: AppTheme.warning,
-                    shape: BoxShape.circle,
-                  ),
+                      color: AppTheme.warning,
+                      shape: BoxShape.circle),
                 ),
                 const SizedBox(width: 6),
-                const Text(
-                  'EN ATTENTE',
-                  style: TextStyle(
-                    color: AppTheme.warning,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+                const Text('EN ATTENTE',
+                    style: TextStyle(
+                        color: AppTheme.warning,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5)),
               ],
             ),
           ),

@@ -4,35 +4,35 @@ import '../../features/auth/data/repositories/auth_repository.dart';
 import '../../features/auth/logic/auth_bloc.dart';
 import '../../features/internship/data/repositories/internship_repository.dart';
 import '../../features/internship/logic/internship_bloc.dart';
+import '../../features/stagiaire/data/repositories/stagiaire_repository.dart';
+import '../../features/stagiaire/logic/stagiaire_bloc.dart';
 
-// sl = Service Locator
 final sl = GetIt.instance;
 
 Future<void> initInjection() async {
-  // 1. CLIENT API (Singleton)
   sl.registerLazySingleton<DioClient>(() => DioClient());
 
-  // 2. REPOSITORIES (Singleton)
-
-  // Auth
   sl.registerLazySingleton<AuthRepository>(
         () => AuthRepository(sl<DioClient>()),
   );
 
-  // Internship ✅ InternshipRepositoryImpl (pas la classe abstraite)
   sl.registerLazySingleton<InternshipRepository>(
         () => InternshipRepositoryImpl(sl<DioClient>()),
   );
 
-  // 3. BLOCS (Factory — nouvelle instance à chaque fois)
+  sl.registerLazySingleton<StagiaireRepository>(
+        () => StagiaireRepository(sl<DioClient>()),
+  );
 
-  // Auth
   sl.registerFactory<AuthBloc>(
         () => AuthBloc(authRepository: sl<AuthRepository>()),
   );
 
-  // Internship
   sl.registerFactory<InternshipBloc>(
         () => InternshipBloc(repository: sl<InternshipRepository>()),
+  );
+
+  sl.registerFactory<StagiaireBloc>(
+        () => StagiaireBloc(repository: sl<StagiaireRepository>()),
   );
 }
