@@ -1,3 +1,5 @@
+// lib/features/stagiaire/widgets/pending/pending_header.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -6,11 +8,10 @@ class PendingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-
+    final top = MediaQuery.of(context).padding.top;
     return Container(
-      color: AppTheme.surface,
-      padding: EdgeInsets.fromLTRB(20, topPadding + 14, 20, 16),
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, top + 14, 20, 16),
       child: Row(
         children: [
           Container(
@@ -28,10 +29,10 @@ class PendingHeader extends StatelessWidget {
                 color: Colors.white, size: 20),
           ),
           const SizedBox(width: 14),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text('Mon Dossier',
                     style: TextStyle(
                         color: AppTheme.textPrimary,
@@ -48,13 +49,11 @@ class PendingHeader extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
               color: const Color(0xFFFFF4ED),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: AppTheme.warning.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.warning.withOpacity(0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -62,8 +61,7 @@ class PendingHeader extends StatelessWidget {
                 Container(
                   width: 6, height: 6,
                   decoration: const BoxDecoration(
-                      color: AppTheme.warning,
-                      shape: BoxShape.circle),
+                      color: AppTheme.warning, shape: BoxShape.circle),
                 ),
                 const SizedBox(width: 6),
                 const Text('EN ATTENTE',

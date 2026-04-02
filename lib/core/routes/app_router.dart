@@ -9,6 +9,13 @@ import '../../features/internship/pages/subject_list_page.dart';
 import '../../features/internship/pages/subject_detail_page.dart';
 import '../../features/internship/pages/upload_cv_page.dart';
 import '../../features/encadrant/pages/encadrant_home_page.dart';
+import '../../features/encadrant/pages/encadrant_profile_page.dart';
+import '../../features/encadrant/pages/mes_stagiaires_page.dart';
+import '../../features/encadrant/pages/detail_stagiaire_page.dart';
+import '../../features/encadrant/pages/creer_tache_page.dart';
+import '../../features/encadrant/pages/evaluation_page.dart';
+import '../../features/encadrant/pages/rapport_detail_page.dart';
+import '../../features/encadrant/data/models/stagiaire_encadrant_model.dart';
 import '../../features/stagiaire/pages/stagiaire_home_page.dart';
 
 part 'app_router.gr.dart';
@@ -29,6 +36,12 @@ class AppRouter extends _$AppRouter {
 
     // Routes Encadrant
     AutoRoute(page: EncadrantHomeRoute.page),
+    AutoRoute(page: EncadrantProfileRoute.page),
+    AutoRoute(page: MesStagiairesRoute.page),
+    AutoRoute(page: DetailStagiaireRoute.page),
+    AutoRoute(page: CreerTacheRoute.page),
+    AutoRoute(page: EvaluationRoute.page),
+    AutoRoute(page: RapportDetailRoute.page),
 
     // Routes Stagiaire Actif
     AutoRoute(page: StagiaireHomeRoute.page),

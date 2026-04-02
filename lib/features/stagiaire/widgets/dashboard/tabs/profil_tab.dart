@@ -1,3 +1,5 @@
+// lib/features/stagiaire/widgets/dashboard/tabs/profil_tab.dart
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,23 +11,25 @@ class ProfilTab extends StatelessWidget {
   final StagiaireModel dossier;
   const ProfilTab({super.key, required this.dossier});
 
+  String _initials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final u = dossier.utilisateur;
     final s = dossier.sujet;
     final e = dossier.encadrant;
 
-    final initials = u.nomComplet.trim().split(' ').length >= 2
-        ? '${u.nomComplet.trim().split(' ')[0][0]}${u.nomComplet.trim().split(' ')[1][0]}'.toUpperCase()
-        : u.nomComplet.substring(0, 2).toUpperCase();
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          // ── Titre ─────────────────────────────────────
           const Text('Mon Profil',
               style: TextStyle(
                   color: AppTheme.textPrimary,
@@ -34,33 +38,30 @@ class ProfilTab extends StatelessWidget {
                   letterSpacing: -0.5)),
           const SizedBox(height: 4),
           const Text('Informations de votre stage',
-              style: TextStyle(
-                  color: AppTheme.textSecond, fontSize: 13)),
-
+              style: TextStyle(color: AppTheme.textSecond, fontSize: 13)),
           const SizedBox(height: 24),
 
-          // ── Card profil ───────────────────────────────
+          // Card profil
           Container(
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.border),
               boxShadow: AppTheme.shadowSM,
             ),
             child: Column(
               children: [
-
-                // Header card avec gradient
+                // Header gradient
                 Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
                       colors: [Color(0xFFF57C00), Color(0xFFFFB74D)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20)),
+                    borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: Row(
                     children: [
@@ -71,7 +72,7 @@ class ProfilTab extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Center(
-                          child: Text(initials,
+                          child: Text(_initials(u.nomComplet),
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
@@ -93,8 +94,7 @@ class ProfilTab extends StatelessWidget {
                             Text(
                               '${u.cycle?.nom ?? ''} · ${u.filiere?.nom ?? ''}',
                               style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 13),
+                                  color: Colors.white70, fontSize: 13),
                             ),
                           ],
                         ),
@@ -103,7 +103,7 @@ class ProfilTab extends StatelessWidget {
                   ),
                 ),
 
-                // Infos stage
+                // Infos
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -115,17 +115,13 @@ class ProfilTab extends StatelessWidget {
                               fontSize: 13,
                               fontWeight: FontWeight.w700)),
                       const SizedBox(height: 14),
-                      _buildRow(Icons.work_outline_rounded,
-                          'Sujet', s.titre.trim()),
-                      _buildDivider(),
-                      _buildRow(Icons.calendar_today_rounded,
-                          'Début', dossier.dateDebut),
-                      _buildDivider(),
-                      _buildRow(Icons.school_outlined,
-                          'Établissement', u.etablissement ?? '—'),
-                      _buildDivider(),
-                      _buildRow(Icons.email_outlined,
-                          'Email', u.email),
+                      _row(Icons.work_outline_rounded, 'Sujet', s.titre.trim()),
+                      _divider(),
+                      _row(Icons.calendar_today_rounded, 'Début', dossier.dateDebut),
+                      _divider(),
+                      _row(Icons.school_outlined, 'Établissement', u.etablissement ?? '—'),
+                      _divider(),
+                      _row(Icons.email_outlined, 'Email', u.email),
                     ],
                   ),
                 ),
@@ -135,12 +131,12 @@ class ProfilTab extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // ── Encadrant ─────────────────────────────────
+          // Encadrant
           if (e != null)
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppTheme.border),
                 boxShadow: AppTheme.shadowSM,
@@ -163,15 +159,11 @@ class ProfilTab extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
-                          child: Text(
-                            e.nomComplet.trim().split(' ').length >= 2
-                                ? '${e.nomComplet.trim().split(' ')[0][0]}${e.nomComplet.trim().split(' ')[1][0]}'.toUpperCase()
-                                : e.nomComplet.substring(0, 2).toUpperCase(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800),
-                          ),
+                          child: Text(_initials(e.nomComplet),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800)),
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -187,8 +179,7 @@ class ProfilTab extends StatelessWidget {
                             const SizedBox(height: 3),
                             Text(e.email,
                                 style: const TextStyle(
-                                    color: AppTheme.textSecond,
-                                    fontSize: 12)),
+                                    color: AppTheme.textSecond, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -200,7 +191,7 @@ class ProfilTab extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // ── Déconnexion ───────────────────────────────
+          // Déconnexion
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -214,8 +205,7 @@ class ProfilTab extends StatelessWidget {
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.error,
-                side: BorderSide(
-                    color: AppTheme.error.withOpacity(0.3)),
+                side: BorderSide(color: AppTheme.error.withOpacity(0.3)),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
@@ -236,11 +226,11 @@ class ProfilTab extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() =>
-      Container(height: 1, color: AppTheme.border,
-          margin: const EdgeInsets.symmetric(vertical: 10));
+  Widget _divider() => Container(
+      height: 1, color: AppTheme.border,
+      margin: const EdgeInsets.symmetric(vertical: 10));
 
-  Widget _buildRow(IconData icon, String label, String value) {
+  Widget _row(IconData icon, String label, String value) {
     return Row(
       children: [
         Container(

@@ -1,3 +1,5 @@
+// lib/features/stagiaire/widgets/pending/pending_info_card.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -8,7 +10,7 @@ class PendingInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppTheme.border),
         boxShadow: AppTheme.shadowSM,
@@ -16,13 +18,13 @@ class PendingInfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header card
+          // Header
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               color: AppTheme.primarySoft,
-              borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20)),
+              borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
               children: [
@@ -59,38 +61,26 @@ class PendingInfoCard extends StatelessWidget {
                       height: 1.4,
                       letterSpacing: -0.3),
                 ),
-
                 const SizedBox(height: 20),
-
-                _buildInfoRow(Icons.school_outlined,
-                    'Filière', 'Informatique — Master'),
-                _buildDivider(),
-                _buildInfoRow(Icons.calendar_today_rounded,
-                    'Date de dépôt', '18 mars 2025'),
-                _buildDivider(),
-                _buildInfoRow(Icons.timer_outlined,
-                    'Durée', '3 mois'),
-
+                _infoRow(Icons.school_outlined, 'Filière', 'Informatique'),
+                _divider(),
+                _infoRow(Icons.calendar_today_rounded, 'Date de dépôt', '—'),
+                _divider(),
+                _infoRow(Icons.timer_outlined, 'Durée', '3 mois'),
                 const SizedBox(height: 20),
-
                 const Text('Compétences requises',
                     style: TextStyle(
                         color: AppTheme.textSecond,
                         fontSize: 12,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 10),
-
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: const [
-                    'Flutter', 'Dart', 'Spring Boot', 'REST API', 'SQL',
-                  ].map((s) => _SkillChip(label: s)).toList(),
+                  spacing: 8, runSpacing: 8,
+                  children: ['Flutter', 'Dart', 'Spring Boot', 'REST API', 'SQL']
+                      .map((s) => _chip(s))
+                      .toList(),
                 ),
-
                 const SizedBox(height: 20),
-
-                // CV déposé
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -131,11 +121,12 @@ class PendingInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() =>
-      Container(height: 1, color: AppTheme.border,
-          margin: const EdgeInsets.symmetric(vertical: 12));
+  Widget _divider() => Container(
+      height: 1,
+      color: AppTheme.border,
+      margin: const EdgeInsets.symmetric(vertical: 12));
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _infoRow(IconData icon, String label, String value) {
     return Row(
       children: [
         Container(
@@ -166,14 +157,8 @@ class PendingInfoCard extends StatelessWidget {
       ],
     );
   }
-}
 
-class _SkillChip extends StatelessWidget {
-  final String label;
-  const _SkillChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _chip(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

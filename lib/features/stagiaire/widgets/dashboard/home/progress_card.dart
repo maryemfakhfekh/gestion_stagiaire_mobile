@@ -1,3 +1,5 @@
+// lib/features/stagiaire/widgets/dashboard/home/progress_card.dart
+
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
 
@@ -11,24 +13,22 @@ class ProgressCard extends StatefulWidget {
 
 class _ProgressCardState extends State<ProgressCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _progressAnimation;
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..forward();
-    _progressAnimation = Tween<double>(begin: 0.0, end: widget.progress)
-        .animate(CurvedAnimation(
-        parent: _controller, curve: Curves.easeOut));
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..forward();
+    _anim = Tween<double>(begin: 0, end: widget.progress)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -37,35 +37,27 @@ class _ProgressCardState extends State<ProgressCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('VUE D\'ENSEMBLE',
+        const Text('PROGRESSION',
             style: TextStyle(
                 color: AppTheme.textLight,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2)),
         const SizedBox(height: 12),
-
-        // Stats row
         Row(
           children: [
-            _buildStat('3', 'Terminées', AppTheme.success,
-                Icons.check_circle_rounded),
+            _stat('3', 'Terminées', AppTheme.success, const Color(0xFFF0FDF4)),
             const SizedBox(width: 10),
-            _buildStat('2', 'En cours', AppTheme.primary,
-                Icons.radio_button_checked_rounded),
+            _stat('2', 'En cours',  AppTheme.primary, AppTheme.primarySoft),
             const SizedBox(width: 10),
-            _buildStat('2', 'À faire', AppTheme.textLight,
-                Icons.circle_outlined),
+            _stat('2', 'À faire',   AppTheme.textLight, const Color(0xFFF8FAFC)),
           ],
         ),
-
-        const SizedBox(height: 12),
-
-        // Progress bar card
+        const SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: AppTheme.surface,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.border),
             boxShadow: AppTheme.shadowSM,
@@ -74,59 +66,62 @@ class _ProgressCardState extends State<ProgressCard>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 8, height: 8,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary,
-                      shape: BoxShape.circle,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Sprint 1',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.textPrimary)),
+                        const SizedBox(height: 3),
+                        const Text('3 sur 7 tâches complétées',
+                            style: TextStyle(
+                                fontSize: 12, color: AppTheme.textSecond)),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  const Text('Progression du sprint',
-                      style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700)),
-                  const Spacer(),
                   AnimatedBuilder(
-                    animation: _progressAnimation,
-                    builder: (context, _) => Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primarySoft,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${(_progressAnimation.value * 100).toInt()}%',
-                        style: const TextStyle(
-                            color: AppTheme.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800),
-                      ),
+                    animation: _anim,
+                    builder: (_, __) => Text(
+                      '${(_anim.value * 100).toInt()}%',
+                      style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.primary,
+                          letterSpacing: -1),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
               AnimatedBuilder(
-                animation: _progressAnimation,
-                builder: (context, _) => ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: LinearProgressIndicator(
-                    value: _progressAnimation.value,
-                    backgroundColor: AppTheme.border,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppTheme.primary),
-                    minHeight: 8,
-                  ),
+                animation: _anim,
+                builder: (_, __) => Stack(
+                  children: [
+                    Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                          color: AppTheme.border,
+                          borderRadius: BorderRadius.circular(100)),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: _anim.value,
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                              colors: [Color(0xFFF57C00), Color(0xFFFFB74D)]),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text('Sprint 1 · 3 sur 7 tâches complétées',
-                  style: TextStyle(
-                      color: AppTheme.textLight, fontSize: 11)),
             ],
           ),
         ),
@@ -134,32 +129,27 @@ class _ProgressCardState extends State<ProgressCard>
     );
   }
 
-  Widget _buildStat(String value, String label, Color color, IconData icon) {
+  Widget _stat(String value, String label, Color color, Color bg) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: bg,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppTheme.border),
-          boxShadow: AppTheme.shadowSM,
+          border: Border.all(color: color.withOpacity(0.15)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 16),
-            const SizedBox(height: 10),
             Text(value,
                 style: TextStyle(
-                    color: color,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900)),
+                    fontSize: 24, fontWeight: FontWeight.w900, color: color)),
             const SizedBox(height: 2),
             Text(label,
-                style: const TextStyle(
-                    color: AppTheme.textLight,
+                style: TextStyle(
                     fontSize: 11,
-                    fontWeight: FontWeight.w500)),
+                    fontWeight: FontWeight.w600,
+                    color: color.withOpacity(0.8))),
           ],
         ),
       ),

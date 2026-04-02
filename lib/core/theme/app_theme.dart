@@ -12,8 +12,12 @@ class AppTheme {
   static const Color textSecond  = Color(0xFF6B7280);
   static const Color textLight   = Color(0xFF9CA3AF);
   static const Color success     = Color(0xFF22C55E);
+  static const Color successSoft = Color(0xFFF0FDF4);
   static const Color error       = Color(0xFFEF4444);
   static const Color warning     = Color(0xFFD97706);
+  static const Color info        = Color(0xFF3B82F6);
+  static const Color infoBg      = Color(0xFFEFF6FF);
+  static const Color danger      = Color(0xFFEF4444);
 
   // ── Radius ───────────────────────────────────────────────
   static const double radiusXS = 6;

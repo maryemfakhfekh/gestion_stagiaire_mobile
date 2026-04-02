@@ -15,10 +15,46 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    CreerTacheRoute.name: (routeData) {
+      final args = routeData.argsAs<CreerTacheRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CreerTachePage(
+          key: args.key,
+          stagiaire: args.stagiaire,
+        ),
+      );
+    },
+    DetailStagiaireRoute.name: (routeData) {
+      final args = routeData.argsAs<DetailStagiaireRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: DetailStagiairePage(
+          key: args.key,
+          stagiaire: args.stagiaire,
+        ),
+      );
+    },
     EncadrantHomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const EncadrantHomePage(),
+      );
+    },
+    EncadrantProfileRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EncadrantProfilePage(),
+      );
+    },
+    EvaluationRoute.name: (routeData) {
+      final args = routeData.argsAs<EvaluationRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EvaluationPage(
+          key: args.key,
+          stagiaire: args.stagiaire,
+        ),
       );
     },
     LoginRoute.name: (routeData) {
@@ -27,10 +63,26 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
+    MesStagiairesRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const MesStagiairesPage(),
+      );
+    },
     ProfileRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ProfilePage(),
+      );
+    },
+    RapportDetailRoute.name: (routeData) {
+      final args = routeData.argsAs<RapportDetailRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: RapportDetailPage(
+          key: args.key,
+          stagiaire: args.stagiaire,
+        ),
       );
     },
     RegisterRoute.name: (routeData) {
@@ -81,6 +133,82 @@ abstract class _$AppRouter extends RootStackRouter {
 }
 
 /// generated route for
+/// [CreerTachePage]
+class CreerTacheRoute extends PageRouteInfo<CreerTacheRouteArgs> {
+  CreerTacheRoute({
+    Key? key,
+    required StagiaireEncadrantModel stagiaire,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CreerTacheRoute.name,
+          args: CreerTacheRouteArgs(
+            key: key,
+            stagiaire: stagiaire,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CreerTacheRoute';
+
+  static const PageInfo<CreerTacheRouteArgs> page =
+      PageInfo<CreerTacheRouteArgs>(name);
+}
+
+class CreerTacheRouteArgs {
+  const CreerTacheRouteArgs({
+    this.key,
+    required this.stagiaire,
+  });
+
+  final Key? key;
+
+  final StagiaireEncadrantModel stagiaire;
+
+  @override
+  String toString() {
+    return 'CreerTacheRouteArgs{key: $key, stagiaire: $stagiaire}';
+  }
+}
+
+/// generated route for
+/// [DetailStagiairePage]
+class DetailStagiaireRoute extends PageRouteInfo<DetailStagiaireRouteArgs> {
+  DetailStagiaireRoute({
+    Key? key,
+    required StagiaireEncadrantModel stagiaire,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DetailStagiaireRoute.name,
+          args: DetailStagiaireRouteArgs(
+            key: key,
+            stagiaire: stagiaire,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'DetailStagiaireRoute';
+
+  static const PageInfo<DetailStagiaireRouteArgs> page =
+      PageInfo<DetailStagiaireRouteArgs>(name);
+}
+
+class DetailStagiaireRouteArgs {
+  const DetailStagiaireRouteArgs({
+    this.key,
+    required this.stagiaire,
+  });
+
+  final Key? key;
+
+  final StagiaireEncadrantModel stagiaire;
+
+  @override
+  String toString() {
+    return 'DetailStagiaireRouteArgs{key: $key, stagiaire: $stagiaire}';
+  }
+}
+
+/// generated route for
 /// [EncadrantHomePage]
 class EncadrantHomeRoute extends PageRouteInfo<void> {
   const EncadrantHomeRoute({List<PageRouteInfo>? children})
@@ -92,6 +220,58 @@ class EncadrantHomeRoute extends PageRouteInfo<void> {
   static const String name = 'EncadrantHomeRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EncadrantProfilePage]
+class EncadrantProfileRoute extends PageRouteInfo<void> {
+  const EncadrantProfileRoute({List<PageRouteInfo>? children})
+      : super(
+          EncadrantProfileRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EncadrantProfileRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EvaluationPage]
+class EvaluationRoute extends PageRouteInfo<EvaluationRouteArgs> {
+  EvaluationRoute({
+    Key? key,
+    required StagiaireEncadrantModel stagiaire,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EvaluationRoute.name,
+          args: EvaluationRouteArgs(
+            key: key,
+            stagiaire: stagiaire,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EvaluationRoute';
+
+  static const PageInfo<EvaluationRouteArgs> page =
+      PageInfo<EvaluationRouteArgs>(name);
+}
+
+class EvaluationRouteArgs {
+  const EvaluationRouteArgs({
+    this.key,
+    required this.stagiaire,
+  });
+
+  final Key? key;
+
+  final StagiaireEncadrantModel stagiaire;
+
+  @override
+  String toString() {
+    return 'EvaluationRouteArgs{key: $key, stagiaire: $stagiaire}';
+  }
 }
 
 /// generated route for
@@ -109,6 +289,20 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [MesStagiairesPage]
+class MesStagiairesRoute extends PageRouteInfo<void> {
+  const MesStagiairesRoute({List<PageRouteInfo>? children})
+      : super(
+          MesStagiairesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'MesStagiairesRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [ProfilePage]
 class ProfileRoute extends PageRouteInfo<void> {
   const ProfileRoute({List<PageRouteInfo>? children})
@@ -120,6 +314,44 @@ class ProfileRoute extends PageRouteInfo<void> {
   static const String name = 'ProfileRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RapportDetailPage]
+class RapportDetailRoute extends PageRouteInfo<RapportDetailRouteArgs> {
+  RapportDetailRoute({
+    Key? key,
+    required StagiaireEncadrantModel stagiaire,
+    List<PageRouteInfo>? children,
+  }) : super(
+          RapportDetailRoute.name,
+          args: RapportDetailRouteArgs(
+            key: key,
+            stagiaire: stagiaire,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'RapportDetailRoute';
+
+  static const PageInfo<RapportDetailRouteArgs> page =
+      PageInfo<RapportDetailRouteArgs>(name);
+}
+
+class RapportDetailRouteArgs {
+  const RapportDetailRouteArgs({
+    this.key,
+    required this.stagiaire,
+  });
+
+  final Key? key;
+
+  final StagiaireEncadrantModel stagiaire;
+
+  @override
+  String toString() {
+    return 'RapportDetailRouteArgs{key: $key, stagiaire: $stagiaire}';
+  }
 }
 
 /// generated route for

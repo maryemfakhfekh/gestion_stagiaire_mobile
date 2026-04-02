@@ -1,32 +1,20 @@
+// lib/features/stagiaire/logic/stagiaire_bloc.dart
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/repositories/stagiaire_repository.dart';
 import '../data/models/stagiaire_model.dart';
 
-// Events
-abstract class StagiaireEvent {}
-class LoadDossier extends StagiaireEvent {}
-
-// States
-abstract class StagiaireState {}
-class StagiaireInitial extends StagiaireState {}
-class StagiaireLoading extends StagiaireState {}
-class StagiaireLoaded extends StagiaireState {
-  final StagiaireModel dossier;
-  StagiaireLoaded(this.dossier);
-}
-class StagiaireError extends StagiaireState {
-  final String message;
-  StagiaireError(this.message);
-}
+part 'stagiaire_event.dart';
+part 'stagiaire_state.dart';
 
 class StagiaireBloc extends Bloc<StagiaireEvent, StagiaireState> {
   final StagiaireRepository repository;
 
   StagiaireBloc({required this.repository}) : super(StagiaireInitial()) {
-    on<LoadDossier>(_onLoadDossier);
+    on<LoadDossier>(_onLoad);
   }
 
-  Future<void> _onLoadDossier(
+  Future<void> _onLoad(
       LoadDossier event,
       Emitter<StagiaireState> emit,
       ) async {

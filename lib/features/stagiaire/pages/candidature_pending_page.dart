@@ -1,5 +1,7 @@
+// lib/features/stagiaire/pages/candidature_pending_page.dart
+
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_theme.dart';
 import '../widgets/pending/pending_header.dart';
 import '../widgets/pending/pending_status_card.dart';
 import '../widgets/pending/pending_info_card.dart';
@@ -8,31 +10,24 @@ class CandidaturePendingPage extends StatefulWidget {
   const CandidaturePendingPage({super.key});
 
   @override
-  State<CandidaturePendingPage> createState() =>
-      _CandidaturePendingPageState();
+  State<CandidaturePendingPage> createState() => _CandidaturePendingPageState();
 }
 
 class _CandidaturePendingPageState extends State<CandidaturePendingPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 700),
-    )..forward();
-    _fadeAnimation = CurvedAnimation(
-        parent: _fadeController, curve: Curves.easeOut);
+    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
+      ..forward();
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
   }
 
   @override
-  void dispose() {
-    _fadeController.dispose();
-    super.dispose();
-  }
+  void dispose() { _ctrl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +39,7 @@ class _CandidaturePendingPageState extends State<CandidaturePendingPage>
           Container(height: 1, color: AppTheme.border),
           Expanded(
             child: FadeTransition(
-              opacity: _fadeAnimation,
+              opacity: _anim,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
                 child: Column(
@@ -53,8 +48,6 @@ class _CandidaturePendingPageState extends State<CandidaturePendingPage>
                     const SizedBox(height: 16),
                     const PendingInfoCard(),
                     const SizedBox(height: 16),
-
-                    // Note bas de page
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -71,18 +64,14 @@ class _CandidaturePendingPageState extends State<CandidaturePendingPage>
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: AppTheme.border),
                             ),
-                            child: const Icon(
-                                Icons.notifications_outlined,
+                            child: const Icon(Icons.notifications_outlined,
                                 color: AppTheme.textLight, size: 18),
                           ),
                           const SizedBox(width: 12),
                           const Expanded(
                             child: Text(
                               'Vous recevrez un email dès que le RH aura pris une décision.',
-                              style: TextStyle(
-                                  color: AppTheme.textSecond,
-                                  fontSize: 12,
-                                  height: 1.5),
+                              style: TextStyle(color: AppTheme.textSecond, fontSize: 12, height: 1.5),
                             ),
                           ),
                         ],
